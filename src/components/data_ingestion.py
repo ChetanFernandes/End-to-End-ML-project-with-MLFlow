@@ -19,7 +19,7 @@ class Upload_data_to_db:
 
 @dataclass       
 class Data_ingestion_config:
-    raw_data_path:str = os.path.join("artifacts","raw_csv")
+    raw_data_path:str = os.path.join("artifacts","raw.csv")
 
 
 class initiate_data_ingestion:

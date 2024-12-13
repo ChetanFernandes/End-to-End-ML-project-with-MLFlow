@@ -1,0 +1,17 @@
+stages:
+ data_ingestion:
+      cmd: python src/pipeline/Training_pipeline.py
+      deps:
+          - src/pipeline/Training_pipeline.py
+          - src/constants/constants.py
+      outs:
+          - artifacts/raw.csv
+ data_Transformation:
+      cmd: python src/pipeline/Training_pipeline.py
+      deps:
+          - src/pipeline/Training_pipeline.py
+          - src/utilis.py
+      outs:
+          - artifacts/x.csv
+          - artifacts/y.csv
+          - artifacts/Processor.pkl
