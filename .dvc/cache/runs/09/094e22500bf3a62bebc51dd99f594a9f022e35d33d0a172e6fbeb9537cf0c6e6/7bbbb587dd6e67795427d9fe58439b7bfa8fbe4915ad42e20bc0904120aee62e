@@ -1,0 +1,23 @@
+cmd: python src/pipeline/Training_pipeline.py
+deps:
+- path: src/pipeline/Training_pipeline.py
+  hash: md5
+  md5: a443d835f5e05d41c27fcd082a527170
+  size: 1834
+- path: src/utilis.py
+  hash: md5
+  md5: b04304670d7d48fd0c3f19995b4a5e0a
+  size: 1195
+outs:
+- path: artifacts/Processor.pkl
+  hash: md5
+  md5: dd4537d1fa70906c76027ae3ba91377f
+  size: 296
+- path: artifacts/x.csv
+  hash: md5
+  md5: 93b5a1e6af904976ef6a8268181bfd93
+  size: 411826
+- path: artifacts/y.csv
+  hash: md5
+  md5: a80f77b5d04894f3ab69c5c10c927521
+  size: 20574
