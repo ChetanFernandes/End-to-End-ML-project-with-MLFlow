@@ -1,0 +1,78 @@
+model_selection:
+    model:
+      GBC:
+        search_param_grid:
+          loss :
+           - exponential
+          learning_rate: 
+           - .5
+           - .10
+           - .20
+          n_estimators :
+           - 200
+           - 150
+          min_samples_split:
+           - 5
+           - 10
+           - 20
+           - 30
+          min_samples_leaf:
+           - 5
+           - 10
+           - 18
+          max_depth:
+           - 8
+           - 15
+           - 20
+          max_features:
+           - sqrt
+           - log2
+          ccp_alpha:
+           - .8
+           - .15 
+      RFC:
+        search_param_grid:
+          n_estimators:
+           - 150
+           - 200
+          criterion:
+           - gini 
+           - entropy
+          max_depth:
+           - 10
+           - 15
+           - 20
+      SVC:
+        search_param_grid:
+          C:
+           - 2
+           - 4
+           - 10
+          kernel: 
+           - linear
+           - poly
+           - rbf 
+          coef0:
+           - 0.1
+           - 0.5
+      LSVC:
+        search_param_grid:  
+          penalty:
+           - l1
+           - l2
+          loss:
+           - squared_hinge
+           - hinge
+          C:
+           - 2
+           - 5
+           - 8      
+
+      
+           
+           
+
+      
+
+    
+        

@@ -1,7 +1,7 @@
 schema: '2.0'
 stages:
   data_ingestion:
-    cmd: python src/pipeline/Training_pipeline.py
+    cmd: python src/pipeline/Training_pipeline.py --task data_ingestion
     deps:
     - path: src/constants/constants.py
       hash: md5
@@ -9,24 +9,29 @@ stages:
       size: 168
     - path: src/pipeline/Training_pipeline.py
       hash: md5
-      md5: a443d835f5e05d41c27fcd082a527170
-      size: 1834
+      md5: 146b76aef1c5fad6db2189d6d8e8d0f3
+      size: 3179
     outs:
     - path: artifacts/raw.csv
       hash: md5
       md5: c1cc30145be2f5c70c08402d76c1fc1c
       size: 800203
-  data_Transformation:
-    cmd: python src/pipeline/Training_pipeline.py
+  data_transformation:
+    cmd: python src/pipeline/Training_pipeline.py --task transformation --raw_data_path
+      artifacts/raw.csv
     deps:
+    - path: artifacts/raw.csv
+      hash: md5
+      md5: c1cc30145be2f5c70c08402d76c1fc1c
+      size: 800203
     - path: src/pipeline/Training_pipeline.py
       hash: md5
-      md5: a443d835f5e05d41c27fcd082a527170
-      size: 1834
+      md5: 146b76aef1c5fad6db2189d6d8e8d0f3
+      size: 3179
     - path: src/utilis.py
       hash: md5
-      md5: b04304670d7d48fd0c3f19995b4a5e0a
-      size: 1195
+      md5: d13b30a1fff1c43a746bdf8b56b57e91
+      size: 12447
     outs:
     - path: artifacts/Processor.pkl
       hash: md5
@@ -40,3 +45,32 @@ stages:
       hash: md5
       md5: a80f77b5d04894f3ab69c5c10c927521
       size: 20574
+  model_training:
+    cmd: python src/pipeline/Training_pipeline.py --task model_trainer --x_path artifacts/x.csv
+      --y_path artifacts/y.csv --processor_path artifacts/Processor.pkl
+    deps:
+    - path: artifacts/Processor.pkl
+      hash: md5
+      md5: a1a421f1a2132019baf5ec71b266e08b
+      size: 1546
+    - path: artifacts/x.csv
+      hash: md5
+      md5: 93b5a1e6af904976ef6a8268181bfd93
+      size: 411826
+    - path: artifacts/y.csv
+      hash: md5
+      md5: a80f77b5d04894f3ab69c5c10c927521
+      size: 20574
+    - path: src/pipeline/Training_pipeline.py
+      hash: md5
+      md5: 146b76aef1c5fad6db2189d6d8e8d0f3
+      size: 3179
+    - path: src/utilis.py
+      hash: md5
+      md5: d13b30a1fff1c43a746bdf8b56b57e91
+      size: 12447
+    outs:
+    - path: artifacts/model.pkl
+      hash: md5
+      md5: f21936e35e233fdf88d84ee5ea6af001
+      size: 7500986

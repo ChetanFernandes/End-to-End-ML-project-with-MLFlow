@@ -7,7 +7,7 @@ import pandas as pd
 from sklearn.pipeline import Pipeline
 from sklearn.compose import ColumnTransformer
 from sklearn.preprocessing import RobustScaler 
-from src.utilis import save_obj
+from src.utilis import save_processor_obj
 
 @dataclass
 class data_transformation_config:
@@ -24,7 +24,7 @@ class initiate_data_transformation:
             logging.info("Inside Processor Function to create processor obj")
             processor = Pipeline([('scaler', RobustScaler())])
             logging.info("Calling save function in utilis to store processor object")
-            path = save_obj(self.Transformation_config.processor, processor)
+            path = save_processor_obj(self.Transformation_config.processor, processor)
             logging.info(f"processor object stored \n{path}")
             return path 
             

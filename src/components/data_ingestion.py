@@ -6,6 +6,7 @@ import pandas as pd
 from pymongo import MongoClient
 from src.utilis import upload_data_db
 from dataclasses import dataclass
+from  sklearn.model_selection import train_test_split
 
 
 class Upload_data_to_db:
@@ -20,7 +21,7 @@ class Upload_data_to_db:
 @dataclass       
 class Data_ingestion_config:
     raw_data_path:str = os.path.join("artifacts","raw.csv")
-
+ 
 
 class initiate_data_ingestion:
     def __init__(self):
@@ -45,6 +46,7 @@ class initiate_data_ingestion:
 
             os.makedirs(os.path.dirname(self.data_ingestion_config.raw_data_path), exist_ok=True)
             df.to_csv(self.data_ingestion_config.raw_data_path, index = False, header = True)
+
             return self.data_ingestion_config.raw_data_path
 
         except Exception as e:
