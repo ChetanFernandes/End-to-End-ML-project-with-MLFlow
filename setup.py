@@ -1,6 +1,6 @@
 from setuptools import find_packages, setup
 setup(
-    name="Wafer",
+    name="Phishing",
     version="0.0.1",
     author="Chetan",
     author_email="chetanfern@gmail.com",
