@@ -10,6 +10,10 @@ import mlflow
 import mlflow.pyfunc
 import dagshub
 import yaml
+from dagshub.auth import TokenAuth
+from src.constants.constants import URL,MONGODB,Collection,DAGSHUB_TOKEN
+
+
 
 app = Flask (__name__)
 
@@ -17,7 +21,10 @@ app = Flask (__name__)
 sys.stdout = io.TextIOWrapper(sys.stdout.buffer, encoding='utf-8')
 sys.stderr = io.TextIOWrapper(sys.stderr.buffer, encoding='utf-8')
 
-dagshub.init(repo_owner='chetanfernandes', repo_name='End-to-End-ML-project-with-MLFlow', mlflow=True)
+
+token = os.environ.get("DAGSHUB_TOKEN")  # Ensure this environment variable is set
+auth = TokenAuth(token)
+dagshub.init(repo_owner='chetanfernandes', repo_name='End-to-End-ML-project-with-MLFlow', mlflow=True, auth = auth)
 
 # Load DVC YAML
 def load_dvc_yaml(filepath):
