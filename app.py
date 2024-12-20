@@ -32,7 +32,8 @@ def get_secret():
 
     try:
         get_secret_value_response = client.get_secret_value(SecretId=secret_name)
-        return  get_secret_value_response['SecretString']
+        secret = get_secret_value_response['SecretString']
+        return secret
     except ClientError as e:
         raise e
 
