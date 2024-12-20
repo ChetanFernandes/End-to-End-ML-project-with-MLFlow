@@ -43,7 +43,7 @@ def upload_data_db(url):
             return "Data successfully uploaded to MongoDB"
 
         except Exception as e:
-            raise Exception(e,sys)
+            raise CustomException(e,sys)
         
 def save_processor_obj(path,obj):
      try:
@@ -54,7 +54,7 @@ def save_processor_obj(path,obj):
         return path   
           
      except Exception as e:
-          raise Exception(e,sys)
+          raise CustomException(e,sys)
      
 def load_processor_obj(path):
     try:
@@ -64,7 +64,7 @@ def load_processor_obj(path):
         logging.info("Loaded processor object")
 
     except Exception as e:
-          raise Exception(e,sys)
+          raise CustomException(e,sys)
     
 def load_model_obj(path):
     try:
@@ -74,7 +74,7 @@ def load_model_obj(path):
         logging.info("Loaded model object")
         
     except Exception as e:
-          raise Exception(e,sys)
+          raise CustomException(e,sys)
 
      
 def save_metrics_json(base_path, metric, model):
@@ -93,7 +93,7 @@ def save_metrics_json(base_path, metric, model):
         logging.info(f"Metrics logged successfully at {file_path}")
     
     except Exception as e:
-        raise Exception(f"Error in saving metrics JSON: {e}", sys)
+        raise CustomException(f"Error in saving metrics JSON: {e}", sys)
 
     
 def save_model(path,obj):
@@ -105,7 +105,7 @@ def save_model(path,obj):
         return path 
  
     except Exception as e:
-          raise Exception(e,sys)
+          raise CustomException(e,sys)
 
 
 

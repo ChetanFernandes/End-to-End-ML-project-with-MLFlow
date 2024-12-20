@@ -30,7 +30,7 @@ class prediction_pipeline:
 
           
              except Exception as e:
-                  raise (e,sys)
+                  raise CustomException(e,sys)
 
         def read_prediction_file(self,prediction_file_path):
              try:
@@ -54,7 +54,7 @@ class prediction_pipeline:
                 return self.prediction_configuration.transformed_prediction_file
              
              except Exception as e:
-                  raise (e,sys)
+                  raise CustomException(e,sys)
              
         def predict(self,df):
              try:
@@ -79,7 +79,7 @@ class prediction_pipeline:
                 return preds
              
              except Exception as e:
-                  raise (e,sys)
+                  raise CustomException(e,sys)
              
         def cleaned_predicted_file(self,cleaned_file_path):
              try:
@@ -102,7 +102,7 @@ class prediction_pipeline:
                 return self.prediction_configuration.predicted_file
 
              except Exception as e:
-                  raise (e,sys)
+                  raise CustomException(e,sys)
              
         def run_pred_pipeline(self):
              try:
@@ -112,7 +112,7 @@ class prediction_pipeline:
                   return predicted_file_path
              
              except Exception as e:
-                 raise (e,sys)
+                 raise CustomException(e,sys)
              
 
 
