@@ -19,8 +19,6 @@ sys.stderr = io.TextIOWrapper(sys.stderr.buffer, encoding='utf-8')
 
 #dagshub.init(repo_owner='chetanfernandes', repo_name='End-to-End-ML-project-with-MLFlow', mlflow=True)
 
-
-
 # Load DVC YAML
 def load_dvc_yaml(filepath):
     with open(filepath, 'r') as file:
@@ -37,28 +35,43 @@ def trigger_pipeline():
         try:
             if request.method == 'GET':
                 return jsonify({'message': 'Send a POST request with the stages to trigger the pipeline'}), 200
-            
+
+            try:
+
+                subprocess.run(["python", "client.py"], check=True)
+
+            except subprocess.CalledProcessError as client_error:
+                return jsonify({'error': f"Failed to run client.py. Error: {str(client_error)}"}), 500 
+               
+            # Parse JSON payload
             data = request.get_json()
-            if not data or 'stage' not in data or not isinstance(data['stage'],list):
+            if not data or 'stage' not in data or not isinstance(data['stage'], list):
                 return jsonify({'error': 'Invalid payload. Expected a list of stages.'}), 400
-            else:
-                for i in range(len(data['stage'])):
-                    stage = data['stage'][i]
-                    dvc_file_path = 'dvc.yaml'
-                    dvc_pipeline = load_dvc_yaml(dvc_file_path)
 
-                    if not stage or stage not in dvc_pipeline.get('stages', {}):
-                        return jsonify({'error': f"Invalid or missing stage: {stage}"}), 400
-                        # Run DVC repro for the stage
-                    command = ["dvc", "repro", stage]
-                    result = subprocess.run(command, capture_output=True, text=True, encoding="utf-8")
-                    #logging.info(result.stdout)
-                    #logging.error(result.stderr)
+            
+            results = []
+            for stage in data['stage']:
+                    try:
+                        dvc_file_path = 'dvc.yaml'
+                        dvc_pipeline = load_dvc_yaml(dvc_file_path)
 
-                return jsonify(result.stderr,result.stdout), 200
+                        if not stage or stage not in dvc_pipeline.get('stages', {}):
+                            results.append({'stage': stage, 'status': 'failed', 'error': f"Invalid or missing stage: {stage}"})
+                            continue
+
+                        command = ["dvc", "repro", stage]
+                        result = subprocess.run(command, capture_output=True, text=True, encoding="utf-8")
+                        results.append({'stage': stage, 'status': 'success', 'output': result.stdout})
+                    
+                    except subprocess.CalledProcessError as e:
+                        results.append({'stage': stage, 'status': 'failed', 'error': e.stderr})
+                    except Exception as e:
+                        results.append({'stage': stage, 'status': 'failed', 'error': str(e)})
         
+            return jsonify({'results': results}), 200
+            
         except Exception as e:
-            return jsonify({'message': 'Failed in {stage}. Failed reason{e}'}), 400
+            return jsonify({'error': f"Unexpected error: {str(e)}"}), 500
 
        
 @app.route("/predict", methods = ["GET","POST"])
