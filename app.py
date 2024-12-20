@@ -37,6 +37,7 @@ def trigger_pipeline():
         try:
             if request.method == 'GET':
                 return jsonify({'message': 'Send a POST request with the stages to trigger the pipeline'}), 200
+            
             data = request.get_json()
             if not data or 'stage' not in data or not isinstance(data['stage'],list):
                 return jsonify({'error': 'Invalid payload. Expected a list of stages.'}), 400
@@ -48,8 +49,6 @@ def trigger_pipeline():
 
                     if not stage or stage not in dvc_pipeline.get('stages', {}):
                         return jsonify({'error': f"Invalid or missing stage: {stage}"}), 400
-
-
                         # Run DVC repro for the stage
                     command = ["dvc", "repro", stage]
                     result = subprocess.run(command, capture_output=True, text=True, encoding="utf-8")
@@ -59,7 +58,7 @@ def trigger_pipeline():
                 return jsonify({'message': 'All stages processed successfully'}), 200
         
         except Exception as e:
-            return jsonify({'message': 'Failed in {stage}. Failed reason{e}'}), 00
+            return jsonify({'message': 'Failed in {stage}. Failed reason{e}'}), 400
 
        
 @app.route("/predict", methods = ["GET","POST"])
