@@ -59,7 +59,7 @@ class prediction_pipeline:
         def predict(self,df):
              try:
     
-                model_file_path = os.path.join("artifacts", "Model.pkl")
+                model_file_path = os.path.join("artifacts", "model.pkl")
                 processor_file_path = os.path.join("artifacts", "Processor.pkl")
 
                 logging.info("Loading  Model obj")

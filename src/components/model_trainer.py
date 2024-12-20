@@ -17,7 +17,7 @@ class train_test_config:
     X_test:str = os.path.join("artifacts","X_test.csv")
     y_train:str = os.path.join("artifacts","y_train.csv")
     y_test:str = os.path.join("artifacts","y_test.csv")
-    Trained_model:str = os.path.join("artifacts","Model.pkl")
+    Trained_model:str = os.path.join("artifacts", "Model.pkl")
     yaml_file = os.path.join('config','model.yaml')
 
 class model_training:

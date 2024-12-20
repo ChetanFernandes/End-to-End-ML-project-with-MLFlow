@@ -56,6 +56,17 @@ def save_processor_obj(path,obj):
      except Exception as e:
           raise CustomException(e,sys)
      
+def save_model(path,obj):
+    try:
+        dir_name = os.path.dirname(path)
+        os.makedirs(dir_name, exist_ok = True)
+        with open(path,"wb") as model_obj:
+            pickle.dump(obj,model_obj)
+        return path 
+ 
+    except Exception as e:
+          raise CustomException(e,sys)
+     
 def load_processor_obj(path):
     try:
         logging.info("Inside processor obj loading function")
@@ -95,17 +106,7 @@ def save_metrics_json(base_path, metric, model):
     except Exception as e:
         raise CustomException(f"Error in saving metrics JSON: {e}", sys)
 
-    
-def save_model(path,obj):
-    try:
-        dir_name = os.path.dirname(path)
-        os.makedirs(dir_name, exist_ok = True)
-        with open(path,"wb") as model_obj:
-            pickle.dump(obj,model_obj)
-        return path 
- 
-    except Exception as e:
-          raise CustomException(e,sys)
+
 
 
 
