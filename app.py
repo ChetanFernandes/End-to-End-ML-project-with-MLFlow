@@ -22,9 +22,25 @@ sys.stdout = io.TextIOWrapper(sys.stdout.buffer, encoding='utf-8')
 sys.stderr = io.TextIOWrapper(sys.stderr.buffer, encoding='utf-8')
 
 
-token = os.environ.get("DAGSHUB_TOKEN")  # Ensure this environment variable is set
-auth = TokenAuth(token)
-dagshub.init(repo_owner='chetanfernandes', repo_name='End-to-End-ML-project-with-MLFlow', mlflow=True, auth = auth)
+
+os.environ["DAGSHUB_TOKEN"] = "f91f8384481fe7c379f0f822f767a850e36881a7"
+
+# Initialize Dagshub with MLflow
+dagshub.init(
+    repo_owner='chetanfernandes',
+    repo_name='End-to-End-ML-project-with-MLFlow',
+    mlflow=True
+)
+
+import logging
+logging.basicConfig(level=logging.DEBUG)
+
+# Debug the environment token
+print(f"DAGSHUB_TOKEN: {os.environ.get('DAGSHUB_TOKEN')}")
+
+# Debug repository details
+print(f"Repository: chetanfernandes/End-to-End-ML-project-with-MLFlow")
+#dagshub.init(repo_owner='chetanfernandes', repo_name='End-to-End-ML-project-with-MLFlow', mlflow=True, auth = auth)
 
 # Load DVC YAML
 def load_dvc_yaml(filepath):
