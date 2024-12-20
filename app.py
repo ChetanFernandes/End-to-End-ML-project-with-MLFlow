@@ -10,34 +10,56 @@ import mlflow
 import mlflow.pyfunc
 import dagshub
 import yaml
-#from src.constants.constants import URL,MONGODB,Collection,DAGSHUB_TOKEN
-
-
+import boto3
+from botocore.exceptions import ClientError
 
 app = Flask (__name__)
-
 
 sys.stdout = io.TextIOWrapper(sys.stdout.buffer, encoding='utf-8')
 sys.stderr = io.TextIOWrapper(sys.stderr.buffer, encoding='utf-8')
 
+def get_secret():
 
+    secret_name = "DAGSHUB_TOKEN"
+    region_name = "ap-south-1"
+
+    # Create a Secrets Manager client
+    session = boto3.session.Session()
+    client = session.client(
+        service_name='secretsmanager',
+        region_name=region_name
+    )
+
+    try:
+        get_secret_value_response = client.get_secret_value(SecretId=secret_name)
+        return  get_secret_value_response['SecretString']
+    except ClientError as e:
+        raise e
+
+
+def initialize_dagshub_connection():
+    dagshub_token = get_secret()
+    if not dagshub_token:
+        raise Exception("DagsHub token not found in AWS Secrets Manager.")
+    
+    # Set the DAGSHUB_TOKEN environment variable
+    os.environ["DAGSHUB_TOKEN"] = dagshub_token
 
 # Initialize Dagshub with MLflow
-dagshub.init(
-    repo_owner='chetanfernandes',
-    repo_name='End-to-End-ML-project-with-MLFlow',
-    mlflow=True
-)
+    dagshub.init(
+        repo_owner='chetanfernandes',
+        repo_name='End-to-End-ML-project-with-MLFlow',
+        mlflow=True
+         )
 
-import logging
-logging.basicConfig(level=logging.DEBUG)
+@app.route("/connect", methods=["POST"])
+def connect_dagshub():
+    try:
+        initialize_dagshub_connection()
+        return jsonify({"message": "Successfully connected to DagsHub."}), 200
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500
 
-# Debug the environment token
-print(f"DAGSHUB_TOKEN: {os.environ.get('DAGSHUB_TOKEN')}")
-
-# Debug repository details
-print(f"Repository: chetanfernandes/End-to-End-ML-project-with-MLFlow")
-#dagshub.init(repo_owner='chetanfernandes', repo_name='End-to-End-ML-project-with-MLFlow', mlflow=True, auth = auth)
 
 # Load DVC YAML
 def load_dvc_yaml(filepath):
@@ -103,4 +125,4 @@ def predict():
         raise CustomException(e,sys)
     
 if __name__ == "__main__":
-    app.run(host="0.0.0.0", port=8000, debug = True)
+    app.run(host="0.0.0.0", port=5000, debug = True)
