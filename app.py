@@ -52,10 +52,10 @@ def trigger_pipeline():
                         # Run DVC repro for the stage
                     command = ["dvc", "repro", stage]
                     result = subprocess.run(command, capture_output=True, text=True, encoding="utf-8")
-                    logging.info(result.stdout)
-                    logging.error(result.stderr)
+                    #logging.info(result.stdout)
+                    #logging.error(result.stderr)
 
-                return jsonify({'message': 'All stages processed successfully'}), 200
+                return jsonify(result.stderr,result.stdout), 200
         
         except Exception as e:
             return jsonify({'message': 'Failed in {stage}. Failed reason{e}'}), 400
