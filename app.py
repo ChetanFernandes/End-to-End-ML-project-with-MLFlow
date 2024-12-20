@@ -40,23 +40,23 @@ def trigger_pipeline():
             data = request.get_json()
             if not data or 'stage' not in data or not isinstance(data['stage'],list):
                 return jsonify({'error': 'Invalid payload. Expected a list of stages.'}), 400
-        
-            for i in range(len(data['stage'])):
-                stage = data['stage'][i]
-                dvc_file_path = 'dvc.yaml'
-                dvc_pipeline = load_dvc_yaml(dvc_file_path)
+            else:
+                for i in range(len(data['stage'])):
+                    stage = data['stage'][i]
+                    dvc_file_path = 'dvc.yaml'
+                    dvc_pipeline = load_dvc_yaml(dvc_file_path)
 
-                if not stage or stage not in dvc_pipeline.get('stages', {}):
-                    return jsonify({'error': f"Invalid or missing stage: {stage}"}), 400
+                    if not stage or stage not in dvc_pipeline.get('stages', {}):
+                        return jsonify({'error': f"Invalid or missing stage: {stage}"}), 400
 
 
-                    # Run DVC repro for the stage
-                command = ["dvc", "repro", stage]
-                result = subprocess.run(command, capture_output=True, text=True, encoding="utf-8")
-                logging.info(result.stdout)
-                logging.error(result.stderr)
+                        # Run DVC repro for the stage
+                    command = ["dvc", "repro", stage]
+                    result = subprocess.run(command, capture_output=True, text=True, encoding="utf-8")
+                    logging.info(result.stdout)
+                    logging.error(result.stderr)
 
-            return jsonify({'message': 'All stages processed successfully'}), 200
+                return jsonify({'message': 'All stages processed successfully'}), 200
         
         except Exception as e:
             return jsonify({'message': 'Failed in {stage}. Failed reason{e}'}), 00
@@ -79,4 +79,4 @@ def predict():
         raise CustomException(e,sys)
     
 if __name__ == "__main__":
-    app.run(host="0.0.0.0", port=8000)
+    app.run(host="0.0.0.0", port=8000, debug = True)
