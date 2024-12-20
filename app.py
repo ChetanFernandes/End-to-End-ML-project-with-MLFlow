@@ -22,7 +22,7 @@ sys.stderr = io.TextIOWrapper(sys.stderr.buffer, encoding='utf-8')
 
 
 
-os.environ["DAGSHUB_TOKEN"] = "f91f8384481fe7c379f0f822f767a850e36881a7"
+os.environ["DAGSHUB_TOKEN"] = "b681ea9d4c24d7ee5f22606ef356ab946e02b20c"
 
 # Initialize Dagshub with MLflow
 dagshub.init(
