@@ -1,9 +1,9 @@
 import requests
 
 # Define the payload
-url = 'http://127.0.0.1:8000/trigger_pipeline'
+url = 'http://127.0.0.1:8000/train'
 headers = {"Content-Type": "application/json"}
-payload =  {'stage': ['data_ingestion',"data_transformation",'model_training']}
+payload =  {"stage": ["data_ingestion","data_transformation","model_training"]}
 
 try:
     # Send a POST request to the Flask endpoint
