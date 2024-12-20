@@ -1,0 +1,15 @@
+cmd: python src/pipeline/Training_pipeline.py --task data_ingestion
+deps:
+- path: src/constants/constants.py
+  hash: md5
+  md5: 5a7528967955854ca43685185623e83e
+  size: 168
+- path: src/pipeline/Training_pipeline.py
+  hash: md5
+  md5: 146b76aef1c5fad6db2189d6d8e8d0f3
+  size: 3179
+outs:
+- path: artifacts/raw.csv
+  hash: md5
+  md5: d6e1e5117493e7229dceb7a74a571d58
+  size: 800203
