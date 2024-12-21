@@ -37,7 +37,6 @@ def get_secret():
     except ClientError as e:
         raise e
 
-
 def initialize_dagshub_connection():
     dagshub_token = get_secret()
     if not dagshub_token:
