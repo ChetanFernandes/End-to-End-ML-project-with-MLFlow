@@ -80,34 +80,36 @@ def trigger_pipeline():
         try:
                 if request.method == 'GET':
                      return jsonify({'message': 'Send a POST request with the stages to trigger the pipeline'}), 200
-                data = request.get_json()
-                print(data)
-                if not data or 'stage' not in data or not isinstance(data['stage'], list):
-                    return jsonify({'error': 'Invalid payload. Expected a list of stages.'}), 400
                 
-                results = []
-                for stage in data['stage']:
-                        try:
-                            dvc_file_path = 'dvc.yaml'
-                            dvc_pipeline = load_dvc_yaml(dvc_file_path)
+                if request.method == 'POST':
+                    data = request.get_json()
+                    logging(f" {data}")
+                    if not data or 'stage' not in data or not isinstance(data['stage'], list):
+                        return jsonify({'error': 'Invalid payload. Expected a list of stages.'}), 400
+                    
+                    results = []
+                    for stage in data['stage']:
+                            try:
+                                dvc_file_path = 'dvc.yaml'
+                                dvc_pipeline = load_dvc_yaml(dvc_file_path)
 
-                            if not stage or stage not in dvc_pipeline.get('stages', {}):
-                                results.append({'stage': stage, 'status': 'failed', 'error': f"Invalid or missing stage: {stage}"})
-                                continue
+                                if not stage or stage not in dvc_pipeline.get('stages', {}):
+                                    results.append({'stage': stage, 'status': 'failed', 'error': f"Invalid or missing stage: {stage}"})
+                                    continue
 
-                            command = ["dvc", "repro", stage]
-                            result = subprocess.run(command, capture_output=True, text=True, encoding="utf-8")
-                            results.append({'stage': stage, 'status': 'success', 'output': result.stdout})
-                        
-                        except subprocess.CalledProcessError as e:
-                            results.append({'stage': stage, 'status': 'failed', 'error': e.stderr})
-                        except Exception as e:
-                            results.append({'stage': stage, 'status': 'failed', 'error': str(e)})
-            
-                return jsonify({'results': results}), 200
-              
+                                command = ["dvc", "repro", stage]
+                                result = subprocess.run(command, capture_output=True, text=True, encoding="utf-8")
+                                results.append({'stage': stage, 'status': 'success', 'output': result.stdout})
+                            
+                            except subprocess.CalledProcessError as e:
+                                results.append({'stage': stage, 'status': 'failed', 'error': e.stderr})
+                            except Exception as e:
+                                results.append({'stage': stage, 'status': 'failed', 'error': str(e)})
+                
+                    return jsonify({'results': results}), 200
+                
         except Exception as e:
-            return jsonify({'error': f"Unexpected error: {str(e)}"}), 500
+                return jsonify({'error': f"Unexpected error: {str(e)}"}), 500
 
        
 @app.route("/predict", methods = ["GET","POST"])
