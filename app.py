@@ -83,7 +83,6 @@ def trigger_pipeline():
                 
                 if request.method == 'POST':
                     data = request.get_json()
-                    logging(f" {data}")
                     if not data or 'stage' not in data or not isinstance(data['stage'], list):
                         return jsonify({'error': 'Invalid payload. Expected a list of stages.'}), 400
                     
@@ -109,7 +108,10 @@ def trigger_pipeline():
                     return jsonify({'results': results}), 200
                 
         except Exception as e:
+                logging.info(f"{e}")
+                raise CustomException (e,sys)
                 return jsonify({'error': f"Unexpected error: {str(e)}"}), 500
+          
 
        
 @app.route("/predict", methods = ["GET","POST"])
