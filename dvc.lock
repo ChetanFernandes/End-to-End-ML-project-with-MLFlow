@@ -45,3 +45,32 @@ stages:
       hash: md5
       md5: 648ba274296d448efd8a4bdef1ddb144
       size: 20574
+  model_training:
+    cmd: python src/pipeline/Training_pipeline.py --task model_trainer --x_path artifacts/x.csv
+      --y_path artifacts/y.csv --processor_path artifacts/Processor.pkl
+    deps:
+    - path: artifacts/Processor.pkl
+      hash: md5
+      md5: 86f6bad14dc9737fb23c3c23bd557f12
+      size: 1547
+    - path: artifacts/x.csv
+      hash: md5
+      md5: 8251070401b88c10279821b5505afb6d
+      size: 411826
+    - path: artifacts/y.csv
+      hash: md5
+      md5: 648ba274296d448efd8a4bdef1ddb144
+      size: 20574
+    - path: src/pipeline/Training_pipeline.py
+      hash: md5
+      md5: bfcf2d20c7412e49fbbe9ee05f712121
+      size: 3180
+    - path: src/utilis.py
+      hash: md5
+      md5: f6d59c1be2ffd5cc0de5200388560060
+      size: 12453
+    outs:
+    - path: artifacts/Model.pkl
+      hash: md5
+      md5: 7ce6d764843255a6da74db0058fe225c
+      size: 7449618
