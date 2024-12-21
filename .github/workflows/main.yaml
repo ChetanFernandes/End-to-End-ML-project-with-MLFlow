@@ -95,15 +95,5 @@ jobs:
         run: |
          docker system prune -f
 
-      - name: Debug Environment Variables
-        run: printenv
-
-      - name: Test ECR Login
-        run: | 
-         aws ecr describe-repositories --region ${{ secrets.AWS_REGION }}
-
-      - name: Test Docker
-        run: docker ps
-       
-      
+    
          
