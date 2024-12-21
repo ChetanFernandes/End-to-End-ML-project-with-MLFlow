@@ -25,5 +25,5 @@ stages:
       - artifacts/y.csv
       - artifacts/Processor.pkl
     outs:
-      - artifacts/model.pkl
+      - artifacts/Model.pkl
    
