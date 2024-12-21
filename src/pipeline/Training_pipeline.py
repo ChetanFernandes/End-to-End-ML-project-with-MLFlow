@@ -73,7 +73,7 @@ def main():
 
         # Execute the task based on the argument
         if args.task == 'data_ingestion':
-            read_data_from_db()
+             read_data_from_db()
         elif args.task == 'transformation':
             transformation(args.raw_data_path)
         elif args.task == 'model_trainer':
