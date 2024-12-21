@@ -18,6 +18,8 @@ app = Flask (__name__)
 sys.stdout = io.TextIOWrapper(sys.stdout.buffer, encoding='utf-8')
 sys.stderr = io.TextIOWrapper(sys.stderr.buffer, encoding='utf-8')
 
+
+'''
 def get_secret():
 
     secret_name = "DAGSHUB_TOKEN"
@@ -44,14 +46,12 @@ def initialize_dagshub_connection():
     
     # Set the DAGSHUB_TOKEN environment variable
     os.environ["DAGSHUB_TOKEN"] = dagshub_token
+'''
 
 # Initialize Dagshub with MLflow
-    dagshub.init(
-        repo_owner='chetanfernandes',
-        repo_name='End-to-End-ML-project-with-MLFlow',
-        mlflow=True
-         )
+dagshub.init(repo_owner='chetanfernandes',repo_name='End-to-End-ML-project-with-MLFlow',mlflow=True)
     
+'''
 @app.route("/connect", methods=["POST"])
 def connect_dagshub():
     try:
@@ -59,7 +59,7 @@ def connect_dagshub():
         return jsonify({"message": "Successfully connected to DagsHub."}), 200
     except Exception as e:
         return jsonify({"error": str(e)}), 500
-
+'''
 
 # Load DVC YAML
 def load_dvc_yaml(filepath):
@@ -72,12 +72,11 @@ def route():
     return "Welcome to my application"
 
 
-@app.route('/train', methods = ["POST", "GET"])
+@app.route('/train', methods = ["POST","GET"])
 def trigger_pipeline():
         try:
                 if request.method == 'GET':
                      return jsonify({'message': 'Send a POST request with the stages to trigger the pipeline'}), 200
-
                 data = request.get_json()
                 print(data)
                 if not data or 'stage' not in data or not isinstance(data['stage'], list):

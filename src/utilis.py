@@ -120,7 +120,7 @@ def integrate_ml_flow():
 def modeltraining(X_train,X_test,y_train,y_test):
       
     try:
-        initialize_ml_flow = integrate_ml_flow()
+        #initialize_ml_flow = integrate_ml_flow()
      
         models = { "LR" : LogisticRegressionCV(),
             "SVC" : SVC(),
