@@ -12,6 +12,7 @@ import dagshub
 import yaml
 import boto3
 from botocore.exceptions import ClientError
+from src.constants.constants import *
 
 app = Flask (__name__)
 
@@ -38,28 +39,30 @@ def get_secret():
         return secret
     except ClientError as e:
         raise e
-
+'''
 def initialize_dagshub_connection():
-    dagshub_token = get_secret()
+    dagshub_token = DAGSHUB_TOKEN
+    os.environ["DAGSHUB_TOKEN"] = DAGSHUB_TOKEN
+    dagshub.init(repo_owner='chetanfernandes',repo_name='End-to-End-ML-project-with-MLFlow',mlflow=True)
     if not dagshub_token:
         raise Exception("DagsHub token not found in AWS Secrets Manager.")
     
     # Set the DAGSHUB_TOKEN environment variable
-    os.environ["DAGSHUB_TOKEN"] = dagshub_token
-'''
+   
+    #os.environ["DAGSHUB_TOKEN"] = DAGSHUB_TOKEN
 
 # Initialize Dagshub with MLflow
-dagshub.init(repo_owner='chetanfernandes',repo_name='End-to-End-ML-project-with-MLFlow',mlflow=True)
+    #dagshub.init(repo_owner='chetanfernandes',repo_name='End-to-End-ML-project-with-MLFlow',mlflow=True)
     
-'''
-@app.route("/connect", methods=["POST"])
+
+@app.route("/connect", methods=["GET"])
 def connect_dagshub():
     try:
         initialize_dagshub_connection()
         return jsonify({"message": "Successfully connected to DagsHub."}), 200
     except Exception as e:
         return jsonify({"error": str(e)}), 500
-'''
+
 
 # Load DVC YAML
 def load_dvc_yaml(filepath):
