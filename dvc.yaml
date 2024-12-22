@@ -1,11 +1,12 @@
 stages:
   data_ingestion:
-    cmd: python src/pipeline/Training_pipeline.py --task data_ingestion 
+    cmd: python src/pipeline/Training_pipeline.py --task data_ingestion
     deps:
       - src/pipeline/Training_pipeline.py
       - src/constants/constants.py
     outs:
       - artifacts/raw.csv
+
   data_transformation:
     cmd: python src/pipeline/Training_pipeline.py --task transformation --raw_data_path artifacts/raw.csv
     deps:
@@ -16,6 +17,7 @@ stages:
       - artifacts/x.csv
       - artifacts/y.csv
       - artifacts/Processor.pkl
+
   model_training:
     cmd: python src/pipeline/Training_pipeline.py --task model_trainer --x_path artifacts/x.csv --y_path artifacts/y.csv --processor_path artifacts/Processor.pkl
     deps:
@@ -26,4 +28,4 @@ stages:
       - artifacts/Processor.pkl
     outs:
       - artifacts/Model.pkl
-   
+

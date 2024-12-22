@@ -1,0 +1,7 @@
+[core]
+    remote = s3remote
+['remote "s3remote"']
+    url = s3://phishingartifacts/artifacts/
+    access_key_id = AKIAU6VTTAEZ2U6NVRWR
+    secret_access_key = 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
+    region = ap-south-1

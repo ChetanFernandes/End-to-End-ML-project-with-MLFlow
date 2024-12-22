@@ -47,13 +47,6 @@ def initialize_dagshub_connection():
     if not dagshub_token:
         raise Exception("DagsHub token not found in AWS Secrets Manager.")
     
-    # Set the DAGSHUB_TOKEN environment variable
-   
-    #os.environ["DAGSHUB_TOKEN"] = DAGSHUB_TOKEN
-
-# Initialize Dagshub with MLflow
-    #dagshub.init(repo_owner='chetanfernandes',repo_name='End-to-End-ML-project-with-MLFlow',mlflow=True)
-    
 
 @app.route("/connect", methods=["GET"])
 def connect_dagshub():
@@ -70,10 +63,37 @@ def load_dvc_yaml(filepath):
         return yaml.safe_load(file)
     
 
+
+@app.route("/configure")
+def configure_s3():
+    try:
+        # Ensure AWS credentials are set as environment variables
+        aws_access_key = AWS_ACCESS_KEY_ID
+        aws_secret_key = AWS_SECRET_ACCESS_KEY
+        aws_region = AWS_REGION
+
+        if not all([aws_access_key, aws_secret_key, aws_region]):
+            raise EnvironmentError("AWS credentials are not set in environment variables.")
+
+        # Add S3 remote to DVC
+        s3_remote_url = "https://phishingartifacts.s3.ap-south-1.amazonaws.com/artifacts/"
+        subprocess.run(["dvc", "remote", "add", "-d", "s3remote", s3_remote_url], check=True)
+
+        # Configure S3 credentials for DVC
+        subprocess.run(["dvc", "remote", "modify", "s3remote", "access_key_id", aws_access_key], check=True)
+        subprocess.run(["dvc", "remote", "modify", "s3remote", "secret_access_key", aws_secret_key], check=True)
+        subprocess.run(["dvc", "remote", "modify", "s3remote", "region", aws_region], check=True)
+
+        return ("DVC S3 remote successfully configured.")
+
+    except subprocess.CalledProcessError as e:
+        return(f"Error while configuring DVC remote: {e}")
+    except Exception as e:
+        return(f"Unexpected error: {e}")
+
 @app.route("/")
 def route():
-    return "Welcome to my application"
-
+    return "Welcome to my applicatioffn"
 
 @app.route('/train', methods = ["POST","GET"])
 def trigger_pipeline():
@@ -131,4 +151,4 @@ def predict():
         raise CustomException(e,sys)
     
 if __name__ == "__main__":
-    app.run(host="0.0.0.0", port=8080, debug = True)
+    app.run(host="0.0.0.0", port=8000, debug = True)
