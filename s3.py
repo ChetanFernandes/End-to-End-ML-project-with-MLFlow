@@ -9,12 +9,14 @@ Configures DVC to use an S3 remote for artifact storage in a production-grade en
 Ensures credentials are securely retrieved from environment variables.
 """
 try:
+    '''
     load_dotenv()
     # Ensure AWS credentials are set as environment variables
-    AWS_ACCESS_KEY_ID = "AKIAU6VTTAEZ2U6NVRWR"
-    AWS_SECRET_ACCESS_KEY = "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"
+    AWS_ACCESS_KEY_ID =
+    AWS_SECRET_ACCESS_KEY = 
     AWS_REGION = "ap-south-1"
     bucket_url = "https://phishingartifacts.s3.ap-south-1.amazonaws.com/artifacts/"
+    '''
 
 
     if not all([AWS_ACCESS_KEY_ID, AWS_SECRET_ACCESS_KEY, AWS_REGION]):
