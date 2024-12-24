@@ -13,11 +13,43 @@ import yaml
 import boto3
 from botocore.exceptions import ClientError
 from src.constants.constants import *
+from src.cloud_operations import *
 
 app = Flask (__name__)
 
 sys.stdout = io.TextIOWrapper(sys.stdout.buffer, encoding='utf-8')
 sys.stderr = io.TextIOWrapper(sys.stderr.buffer, encoding='utf-8')
+
+ 
+
+@app.route("/")
+def route():
+    return "Welcome to my applicatioffn"
+
+
+# Predict using model
+@app.route("/predict", methods = ["GET","POST"])
+def predict():
+    try:
+
+        if request.method == 'POST':
+
+            pred_pipe = prediction_pipeline(request)
+            predicted_file_path = pred_pipe.run_pred_pipeline()
+            return send_file(predicted_file_path, download_name = "predicted_file.csv", as_attachment = True)
+        
+        else:
+            return render_template('index.html')
+        
+    except Exception as e:
+        raise CustomException(e,sys)
+    
+if __name__ == "__main__":
+    app.run(host="0.0.0.0", port=8000, debug = True)
+
+
+
+
 
 
 '''
@@ -39,7 +71,7 @@ def get_secret():
         return secret
     except ClientError as e:
         raise e
-'''
+
 def initialize_dagshub_connection():
     dagshub_token = DAGSHUB_TOKEN
     os.environ["DAGSHUB_TOKEN"] = DAGSHUB_TOKEN
@@ -132,23 +164,7 @@ def trigger_pipeline():
                 raise CustomException (e,sys)
                 return jsonify({'error': f"Unexpected error: {str(e)}"}), 500
           
-
-       
-@app.route("/predict", methods = ["GET","POST"])
-def predict():
-    try:
-
-        if request.method == 'POST':
-
-            pred_pipe = prediction_pipeline(request)
-            predicted_file_path = pred_pipe.run_pred_pipeline()
-            return send_file(predicted_file_path, download_name = "predicted_file.csv", as_attachment = True)
-        
-        else:
-            return render_template('index.html')
-        
-    except Exception as e:
-        raise CustomException(e,sys)
+'''
     
 if __name__ == "__main__":
     app.run(host="0.0.0.0", port=8000, debug = True)

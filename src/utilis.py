@@ -25,7 +25,9 @@ import warnings
 warnings.filterwarnings('ignore')
 import yaml
 from mlflow.models.signature import infer_signature
-
+from sklearn.pipeline import Pipeline
+from sklearn.compose import ColumnTransformer
+from sklearn.preprocessing import RobustScaler 
 
 
 def upload_data_db(url):
@@ -44,6 +46,18 @@ def upload_data_db(url):
 
         except Exception as e:
             raise CustomException(e,sys)
+        
+
+def processor(path):
+        try:
+            logging.info("Inside Processor Function to create processor obj")
+            processor = Pipeline([('scaler', RobustScaler())])
+            logging.info("Calling save function in utilis to store processor object")
+            path = save_processor_obj(path, processor)
+            logging.info(f"processor object stored \n{path}")
+            return path 
+        except Exception as e:
+          raise CustomException(e,sys)
         
 def save_processor_obj(path,obj):
      try:
@@ -107,21 +121,19 @@ def save_metrics_json(base_path, metric, model):
         raise CustomException(f"Error in saving metrics JSON: {e}", sys)
 
 
-
-
-
 def integrate_ml_flow():
-     dagshub.init(repo_owner='chetanfernandes', repo_name='End-to-End-ML-project-with-MLFlow', mlflow=True)
-     with mlflow.start_run():
-        mlflow.log_param('parameter name', 'value')
-        mlflow.log_metric('metric name', 1)
+        dagshub.init(repo_owner='chetanfernandes', repo_name='End-to-End-ML-project-with-MLFlow', mlflow=True)
     
      
 def modeltraining(X_train,X_test,y_train,y_test):
       
     try:
-        #initialize_ml_flow = integrate_ml_flow()
-     
+        try:
+            a = integrate_ml_flow()
+            logging.info(f"{a}")
+        except Exception as e:
+            logging.info(f" Error - {e,sys}") 
+
         models = { "LR" : LogisticRegressionCV(),
             "SVC" : SVC(),
             "LSVC" : LinearSVC(),
@@ -132,7 +144,6 @@ def modeltraining(X_train,X_test,y_train,y_test):
             "GNB" : GaussianNB()
                 }
             
-        
         logging.info("Intializing ML flow")
         mlflow.set_experiment("Training_model_1.1")
         
@@ -161,15 +172,8 @@ def modeltraining(X_train,X_test,y_train,y_test):
             except ValueError:
                 auc_score = None
 
-
             accuracy = accuracy_score(y_test,y_pred)
             metrics = {"auc_score": auc_score, "Accuracy Score": accuracy}
-    
-
-            #logging.info("Saving METRICS")
-       
-            #save_metrics_json(path, metrics, model)
-
 
             logging.info(f"classification report - {classification_report(y_test,y_pred)}")
             logging.info("Append scores")
@@ -183,8 +187,6 @@ def modeltraining(X_train,X_test,y_train,y_test):
             try:
                 with mlflow.start_run(run_name = run_name):
                 
-                    # Log the error metrics that were calculated during validation
-                    #mlflow.log_params(model.get_params())
                     mlflow.log_metrics(metrics)
                     mlflow.log_params(model.get_params())
 
@@ -214,13 +216,13 @@ def modeltraining(X_train,X_test,y_train,y_test):
             '''
         logging.info("Log and return the best model")
         best_index = np.argmax(report)
-        print(best_index)
+        logging.info(f"Best_index -> {best_index}")
 
         best_model_name = model_list[best_index]
-        print(best_model_name)
+        logging.info(f"best_model_name -> {best_model_name}")
 
         best_model_obj = models[best_model_name]
-        print(best_model_obj)
+        logging.info(f"best_model_obj -> {best_model_obj}")
         
         logging.info(f"Best model: {best_model_name} with accuracy: {report[best_index]:.2f}%")
         return best_model_obj
@@ -232,12 +234,12 @@ def modeltraining(X_train,X_test,y_train,y_test):
 def hyperparameter_tuning(path,X_train,X_test,y_train,y_test):
   
     try:
-       
+
         logging.info("Creating a new ML flow experiment")
-        mlflow.set_experiment("Hyper_Training_1")
+        mlflow.set_experiment("Hyper_Training_1.6")
 
         Hyper_tuning_model_list = []
-        Hyper_tuning_reprot = []
+        Hyper_tuning_report = []
 
         
         Hyper_models = { 
@@ -247,98 +249,69 @@ def hyperparameter_tuning(path,X_train,X_test,y_train,y_test):
                     "GBC" : GradientBoostingClassifier()
                   
                  }
-        for i in range(len(Hyper_models)):
-            model = list(Hyper_models)[i]
-            print(model)
-            model_obj = Hyper_models[model]
-            print(model_obj)
-            model_param_grid = read_yaml_file(path)["model_selection"]["model"][model]["search_param_grid"]
+        for model_name, model_obj in Hyper_models.items():
+            logging.info(f"Starting hyperparameter tuning for: {model_name}")
+            model_param_grid = read_yaml_file(path)["model_selection"]["model"][model_name]["search_param_grid"]
             logging.info("Starting Grid search CV")
             grid_search = GridSearchCV(model_obj, param_grid = model_param_grid, cv=4, n_jobs=1, verbose=5)
-            
+            grid_search.fit(X_train,y_train)
             logging.info("Grid search CV ended")
 
-            grid_search.fit(X_train,y_train)
-             
-            # Best parameters and score
-            best_params = grid_search.best_params_
-            logging.info(f"Best parameters: {best_params}")
-
-            best_score = grid_search.best_score_
-            logging.info(f"Best score:, {best_score}")
-
-            # Evaluate on test data
+  
+            logging.info("Fetch the best model and evaluate")
             best_model = grid_search.best_estimator_
-            logging.info(f"Best model':, {best_model}")
-
+            best_params = grid_search.best_params_
             test_accuracy = best_model.score(X_test, y_test)
-            logging.info(f"Best test accuracy:, {test_accuracy}")
-
-
             y_pred = best_model.predict(X_test)
+            auc_score = roc_auc_score(y_test, y_pred)
 
+            metrics = {"auc_score": auc_score, "test_accuracy": test_accuracy}
+            Hyper_tuning_model_list.append(best_model)
+            Hyper_tuning_report.append(test_accuracy)
+            logging.info(f"Metrics for {model_name}: {metrics}")
+
+
+            # Log the model with a unique artifact path
+            artifact_path = model_name
             try:
-                  auc_score = roc_auc_score(y_test,y_pred)
-            except ValueError:
-                auc_score = None
-          
-
-            model_score = accuracy_score(y_test,y_pred)
-
-            Hyper_tuning_model_list.append(list(Hyper_models.keys())[i])
-            logging.info(f"{Hyper_tuning_model_list}")
-            Hyper_tuning_reprot.append(model_score)
-
-            metrics = {"auc_score": auc_score, "Model Score": model_score, "test_accuracy":test_accuracy}
-            
-   
-            run_name = Hyper_tuning_model_list[i]
-            artifact_path = Hyper_tuning_model_list[i]
-              
-            logging.info(f"{artifact_path}")
-             
-            try:
-                with mlflow.start_run(run_name = run_name):
+                with mlflow.start_run(run_name = model_name):
                 
                     # Log the error metrics that were calculated during validation
                     mlflow.log_metrics(metrics)
-                    mlflow.log_params(best_params)
-                    #mlflow.log_params(best_params, "value 🚀".encode("ascii", "ignore").decode())
+                    #mlflow.log_params(best_params)
+                    mlflow.log_params(best_params, "value 🚀".encode("ascii", "ignore").decode())
 
                     # Log an instance of the trained model for later use
                     signature = infer_signature(X_train, best_model.predict(X_train))
                     
                     # Log an instance of the trained model for later use
                     mlflow.sklearn.log_model(sk_model= best_model, input_example= X_train, artifact_path = artifact_path, signature = signature)
-                    feature_importances = pd.Series(best_model.feature_importances_)
-                    feature_importances.plot(kind="bar", title="Feature Importances")
-                    plt.tight_layout()
-                    plt.savefig("feature_importances.png")
-                    mlflow.log_artifact("feature_importances.png")
-        
+                    '''-
+                    if hasattr(best_model, "feature_importances_"):
+                        feature_importances = pd.Series(best_model.feature_importances_)
+                        feature_importances.plot(kind="bar", title=f"{model_name} Feature Importances")
+                        plt.tight_layout()
+                        plt.savefig(f"{model_name}_feature_importances.png")
+                        mlflow.log_artifact(f"{model_name}_feature_importances.png")
+                    '''
             except Exception as e:
-                 logging.error(f"MLFlow error: {str(e)}")
+                logging.error(f"MLFlow error for {model_name}: {str(e)}")
 
 
-        best_index = np.argmax(Hyper_tuning_reprot)
-        print(best_index)
+         # Identify and log the best model
+        best_index = np.argmax(Hyper_tuning_report)
+        best_model = Hyper_tuning_model_list[best_index]
+        logging.info(f"Best model: {list(Hyper_models.keys())[best_index]} with accuracy: {Hyper_tuning_report[best_index]:.2f}%")
 
-        best_hyper_tuned_model_name = Hyper_tuning_model_list[best_index]
-        print(best_hyper_tuned_model_name)
-        
-        best_hyper_tuned_model_obj = Hyper_models[best_hyper_tuned_model_name]
-        print(best_hyper_tuned_model_obj)
+        with mlflow.start_run(run_name="Best_Model_Run"):
+            mlflow.sklearn.log_model(sk_model=best_model, input_example=X_train, artifact_path="best_model")
 
-
-        logging.info(f"Best model: {best_hyper_tuned_model_obj} with accuracy: {Hyper_tuning_reprot[best_index]:.2f}%")
-        return best_hyper_tuned_model_obj
-
+        return best_model
 
     except Exception as e:
-        raise CustomException(e,sys)
-    
+        raise CustomException(e, sys)
 
-    
+
 def read_yaml_file(path):
     try:
         with open(path,"rb") as yaml_file:

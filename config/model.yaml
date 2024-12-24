@@ -7,23 +7,16 @@ model_selection:
           learning_rate: 
            - .5
            - .10
-           - .20
           n_estimators :
            - 200
-           - 150
           min_samples_split:
            - 5
            - 10
-           - 20
-           - 30
           min_samples_leaf:
            - 5
            - 10
-           - 18
           max_depth:
            - 8
-           - 15
-           - 20
           max_features:
            - sqrt
            - log2

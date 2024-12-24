@@ -21,39 +21,38 @@ def data_upload():
     except Exception as e:
         raise CustomException(e,sys)
     
-def read_data_from_db():
+def data_ingestion():
     try:
         logging.info("Under read_data_db function")
         obj1 = initiate_data_ingestion()
         raw_data_path = obj1.read_data_from_db(URL,MONGODB,Collection)
         logging.info("Data read successfully")
-        logging.info(f"{raw_data_path}")
-        print(raw_data_path)
+        logging.info(f" Raw data Path -> {raw_data_path}")
         return raw_data_path
 
     except Exception as e:
         raise CustomException (e,sys)
     
 
-def transformation(raw_data_path):
+def data_transformation(raw_data_path):
     try:
         logging.info("Initaiting transformation")
         trans_config = initiate_data_transformation()
-        x_path, y_path, processor_path = trans_config.transformation(raw_data_path)
+        x_train_path, x_test_path, y_train_path,y_test_path,processor_path = trans_config.transformation(raw_data_path)
         logging.info("Transformation Completed")
-        print(x_path, y_path, processor_path)
-        return x_path, y_path, processor_path
+        logging.info(f"{x_train_path, x_test_path, y_train_path,y_test_path, processor_path}")
+        return x_train_path, x_test_path, y_train_path,y_test_path,processor_path
 
     except Exception as e:
         raise CustomException (e,sys)  
 
 
-def model_trainer(x_path, y_path, processor_path):
+def model_trainer(x_train_path,x_test_path, y_train_path,y_test_path):
     try:
         logging.info("Inside Model trainer")
         training = model_training()
-        path = training.iniiate_model_training(x_path, y_path, processor_path)
-        return path
+        best_model_obj_path = training.iniiate_model_training(x_train_path, x_test_path, y_train_path,y_test_path)
+        return  best_model_obj_path
     except Exception as e:
         raise CustomException (e,sys)  
     
@@ -65,21 +64,21 @@ def main():
         # Define command-line arguments
         parser.add_argument('--task', choices=['data_ingestion', 'transformation', 'model_trainer'], required=True, help="Task to perform")
         parser.add_argument('--raw_data_path', help="Path to raw data")
-        parser.add_argument('--x_path', help="Path to feature data")
-        parser.add_argument('--y_path', help="Path to target data")
-        parser.add_argument('--processor_path', help="Path to processor file")
-
+        parser.add_argument('--x_train_path', help="Path to feature data")
+        parser.add_argument('--x_test_path', help="Path to target data")
+        parser.add_argument('--y_train_path', help="Path to feature data")
+        parser.add_argument('--y_test_path', help="Path to target data")
         args = parser.parse_args()
 
         # Execute the task based on the argument
         if args.task == 'data_ingestion':
-             read_data_from_db()
+             data_ingestion()
         elif args.task == 'transformation':
-            transformation(args.raw_data_path)
+            data_transformation(args.raw_data_path)
         elif args.task == 'model_trainer':
-            path  = model_trainer(args.x_path,args.y_path,args.processor_path)
+            best_hyper_tuned_model_obj_path = model_trainer(args.x_train_path,args.x_test_path,args.y_train_path,args.y_test_path)
             logging.info("Training and Hyper Tunning completed Completed")
-            print("Best model object post hyper_training saved in path ", path)
+            logging.info("Best model object post hyper_training saved in path ", best_hyper_tuned_model_obj_path)
 
     except Exception as e:
         raise CustomException (e,sys)  
