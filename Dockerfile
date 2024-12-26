@@ -9,6 +9,9 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
     python3-dev && \
     rm -rf /var/lib/apt/lists/*
 
+# Clone the Git repository
+RUN git clone https://github.com/ChetanFernandes/End-to-End-ML-project-with-MLFlow /app
+
 # Set the working directory
 WORKDIR /app
 
