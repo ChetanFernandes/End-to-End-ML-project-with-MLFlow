@@ -12,7 +12,6 @@ from sklearn.svm import LinearSVC
 from sklearn.ensemble import RandomForestClassifier
 from sklearn.ensemble import AdaBoostClassifier
 from sklearn.ensemble import GradientBoostingClassifier
-
 from sklearn.tree import DecisionTreeClassifier
 from sklearn.naive_bayes import GaussianNB
 from sklearn.model_selection import cross_validate
@@ -26,14 +25,14 @@ warnings.filterwarnings('ignore')
 import yaml
 from mlflow.models.signature import infer_signature
 from sklearn.pipeline import Pipeline
-from sklearn.compose import ColumnTransformer
 from sklearn.preprocessing import RobustScaler 
+from src.constants.constants import URL
 
 
-def upload_data_db(url):
+def upload_data_db():
         logging.info("Uploading Data to MongoDB")
         try:
-            client = MongoClient(url)
+            client = MongoClient(URL)
             db = client['phishing']
             collection = db['phishing_collection']
             df = pd.read_csv("notebook\data\Phishing.csv")
@@ -319,7 +318,10 @@ def read_yaml_file(path):
             
     except Exception as e:
         raise CustomException(e, sys)
-
+# Load DVC YAML
+def load_dvc_yaml(filepath):
+    with open(filepath, 'r') as file:
+        return yaml.safe_load(file)
         
 
 

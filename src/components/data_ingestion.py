@@ -4,25 +4,14 @@ import os,sys
 import numpy as np
 import pandas as pd
 from pymongo import MongoClient
-from src.utilis import upload_data_db
 from dataclasses import dataclass
-from  sklearn.model_selection import train_test_split
-
-
-class Upload_data_to_db:
-     def upload_data(self):
-        try:
-            url =  "mongodb+srv://chetan1:chetan1@cluster0.2c8ti.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0"
-            Message = upload_data_db(url)
-            return Message
-        except Exception as e:
-            raise Exception (e,sys)
 
 @dataclass       
 class Data_ingestion_config:
-    raw_data_path:str = os.path.join("artifacts","raw.csv")
-    test_arr:str =  os.path.join("artifacts","test.csv")
- 
+    #timestamp = time.strftime("%Y-%m-%d_%H-%M-%S")
+    #output_dir = os.path.join("artifacts", timestamp)
+    raw_data_path:str = os.path.join("artifacts", "raw.csv")
+   
 
 class initiate_data_ingestion:
     def __init__(self):
@@ -44,19 +33,32 @@ class initiate_data_ingestion:
                 logging.info(f" Column removed successfully -> \n{df.head()}, \n{df.shape}")
             else:
                 logging.info("No coloumn found")
-
-
-            os.makedirs(os.path.dirname(self.data_ingestion_config.raw_data_path), exist_ok=True)
-            df.to_csv(self.data_ingestion_config.raw_data_path, index = False, header = True)
-
-
-            return self.data_ingestion_config.raw_data_path
+            
+            df.drop_duplicates(inplace = True)
+            logging.info(f" \n{df.shape}")
+            try:
+                os.makedirs(os.path.dirname(self.data_ingestion_config.raw_data_path), exist_ok=True)
+                df.to_csv(self.data_ingestion_config.raw_data_path, index = False, header = True)
+                logging.info(f"Raw data saved to {self.data_ingestion_config.raw_data_path}")
+                return self.data_ingestion_config.raw_data_path
+            except PermissionError as e:
+                logging.info(f"PermissionError: {e}")
+                raise CustomException(e, sys)
+            except Exception as e:
+                logging.info(f"Unexpected error: {e}")
+                raise CustomException(e, sys)
+            '''
+            symlink_path = os.path.join("artifacts", "raw.csv")
+            if os.path.islink(symlink_path) or os.path.exists(symlink_path):
+                os.remove(symlink_path)
+            os.symlink(self.data_ingestion_config.raw_data_path, symlink_path)
+            # The symbolic link (raw.csv) points to the actual timestamped artifact 
+            # file created during the pipeline execution.
+            logging.info(f"Symbolic link created/updated at {symlink_path}.")
+            '''
 
         except Exception as e:
             raise CustomException(e,sys)
-
-
-
 
 
 

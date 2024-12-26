@@ -1,10 +1,7 @@
 /raw.csv
-/x.csv
-/y.csv
-/Processor.pkl
-/Model.pkl
-
 /X_train.csv
 /X_test.csv
 /y_train.csv
 /y_test.csv
+/Processor.pkl
+/Model.pkl

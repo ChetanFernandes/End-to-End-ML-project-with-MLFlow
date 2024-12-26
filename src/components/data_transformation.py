@@ -9,15 +9,21 @@ from sklearn.compose import ColumnTransformer
 from sklearn.preprocessing import RobustScaler 
 from src.utilis import *
 from  sklearn.model_selection import train_test_split
+import boto3
+from datetime import datetime
+import subprocess
+import time
 
 @dataclass
 class data_transformation_config:
-    x:str = os.path.join("artifacts","x.csv")
-    y:str = os.path.join("artifacts","y.csv")
-    processor:str = os.path.join("artifacts","Processor.pkl")
+    #timestamp = time.strftime("%Y-%m-%d_%H-%M-%S")
+    #output_dir = os.path.join("artifacts", timestamp)
+    x:str = os.path.join("artifacts", "x.csv")
+    y:str = os.path.join("artifacts", "y.csv")
+    processor:str = os.path.join("artifacts", "Processor.pkl")
     X_train:str = os.path.join("artifacts","X_train.csv")
     X_test:str = os.path.join("artifacts","X_test.csv")
-    y_train:str = os.path.join("artifacts","y_train.csv")
+    y_train:str = os.path.join("artifacts", "y_train.csv")
     y_test:str = os.path.join("artifacts","y_test.csv")
 
 class initiate_data_transformation:
@@ -37,21 +43,17 @@ class initiate_data_transformation:
 
         
             logging.info(f"Check for null values")
-            logging.info(f"Count of null values are {df.isnull().sum().sum()}")
-            null_columns = []
-            for  col in list(df.columns):
-                if df[col].isnull().sum() > 0:
-                    df[col].fillna(pd.median(col))
+            logging.info(f"Count of null values -> {df.isnull().sum().sum()}")
+            null_columns = [col for  col in df.columns if df[col].isnull().sum() > 0]
+            for col in null_columns:
+                    df[col].fillna(df[col].median(), inplace=True)
                     null_columns.append(col)
-                else:
-                    pass  
-            logging.info(f"Number of columns with null values are {null_columns}")
             logging.info(f"Count of null values post filling them {df.isnull().sum().sum()}")
 
-            #split in to x an y
+            logging.info("Split x and y")
             x = df.drop("Result", axis = 1)
             y = df[df.columns[-1]]
-            logging.info(f" {x.shape,y.shape}")
+            logging.info(f" Feature and label split.{x.shape,y.shape}")
 
             os.makedirs(os.path.dirname(self.Transformation_config.x), exist_ok=True)
             x.to_csv(self.Transformation_config.x, index = False, header = True)
@@ -59,7 +61,7 @@ class initiate_data_transformation:
             
             logging.info("Calling processor funtion to create and store processor object")
             processor_obj_path = processor(self.Transformation_config.processor)
-
+            
             logging.info("Splitting data in train and test")
             X_train,X_test,y_train,y_test = train_test_split(x, y, test_size=.30, random_state=1)
 
@@ -79,11 +81,46 @@ class initiate_data_transformation:
             processor_obj_path = save_processor_obj(processor_obj_path,processor_obj)
             logging.info(f"Processor_object_save_successfully")
 
-            logging.info("Saving X_train,X_test,y_train,y_test")
+           
+            logging.info("Saving  scaled data X_train,X_test,y_train,y_test")
             X_test.to_csv(self.Transformation_config.X_test, index = False)
             X_train.to_csv(self.Transformation_config.X_train, index = False)
             y_test.to_csv(self.Transformation_config.y_test, index = False)
             y_train.to_csv(self.Transformation_config.y_train, index = False)
+            return {
+                      self.Transformation_config.X_train,
+                      self.Transformation_config.X_test,
+                      self.Transformation_config.y_train,
+                      self.Transformation_config.y_test,
+                      processor_obj_path
+                  }
+
+    
+            
+        except Exception as e:
+            raise CustomException(e,sys)
+
+       
+            '''          
+            # Upload the model directly to S3 for inference
+            logging.info("Upload the artifacts directly to S3 for inference")
+            
+            s3 = boto3.client("s3")
+            bucket_name = "phishingartifacts"
+            timestamp = datetime.now().strftime("%Y%m%d%H%M%S")
+            file_mapping = {
+                "Processor.pkl": self.Transformation_config.processor,
+                "X_train.csv": self.Transformation_config.X_train,
+                "X_test.csv": self.Transformation_config.X_test,
+                "y_train.csv": self.Transformation_config.y_train,
+                "y_test.csv": self.Transformation_config.y_test,
+                "x.csv": self.Transformation_config.x,
+                "y.csv": self.Transformation_config.y,
+                            }
+            for key, file_path in file_mapping.items():
+                s3.upload_file(file_path, bucket_name, f"{key}_{timestamp}")
+
+            logging.info("Processor uploaded to S3 as 'Processor.pkl'")
 
             return {
                     self.Transformation_config.X_train, 
@@ -93,6 +130,7 @@ class initiate_data_transformation:
                     processor_obj_path}
         except Exception as e:
             raise CustomException(e,sys)
+            '''
 
         
 

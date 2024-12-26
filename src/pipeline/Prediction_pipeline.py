@@ -13,11 +13,12 @@ class prediction_config:
     pred_file_input_dir:str = "prediction"
     predicted_file:str = os.path.join(pred_file_input_dir,"predicted_file.csv")
     transformed_prediction_file:str = os.path.join(pred_file_input_dir,"transformed_file.csv")
-    LOCAL_container_PROCESSOR_PATH:str = os.path.join("s3_artifacts","Processor.pkl")
-    LOCAL_container_MODEL_PATH:str = os.path.join("s3_artifacts","Model.pkl")
+    PROCESSOR_PATH:str = os.path.join("artifacts","Processor.pkl")
+    MODEL_PATH:str = os.path.join("artifacts","Model.pkl")
+
     # File paths in S3
-    PROCESSOR_S3_PATH = "artifacts/files/md5/86/f6bad14dc9737fb23c3c23bd557f12"
-    MODEL_S3_PATH = "artifacts/files/md5/96/f385843e4653b1ac737b3e882fa36f"
+    #PROCESSOR_S3_PATH = "artifacts/files/md5/86/f6bad14dc9737fb23c3c23bd557f12"
+    #MODEL_S3_PATH = "artifacts/files/md5/96/f385843e4653b1ac737b3e882fa36f"
   
 
 class prediction_pipeline:
@@ -81,7 +82,7 @@ class prediction_pipeline:
           except Exception as e:
                raise CustomException(e,sys)
           
-
+        '''
         def download_from_s3(self,s3_path,container_local_path):
           logging.info("Inside Down_load function")
           try:
@@ -103,6 +104,7 @@ class prediction_pipeline:
                     return file_path 
           except Exception as e:
               raise CustomException(e,sys)
+          '''
                     
         def predict(self,df,processor_path, model_path):
              try:
@@ -128,11 +130,11 @@ class prediction_pipeline:
              except Exception as e:
                   raise CustomException(e,sys)
              
-        def cleaned_predicted_file(self,cleaned_file_path,LOCAL_container_PROCESSOR_PATH,LOCAL_container_Model_PATH):
+        def cleaned_predicted_file(self,cleaned_file_path,PROCESSOR_PATH,Model_PATH):
              try:
                 df:pd.DataFrame = pd.read_csv(cleaned_file_path)
-                print(cleaned_file_path)
-                preds = self.predict(df,LOCAL_container_PROCESSOR_PATH,LOCAL_container_Model_PATH )
+                logging.info(f"{cleaned_file_path}")
+                preds = self.predict(df,PROCESSOR_PATH,Model_PATH )
                 y_test_path = os.path.join("artifacts", "y_test.csv")
                 y_test_result:pd.DataFrame = pd.read_csv(y_test_path)
 
@@ -156,9 +158,9 @@ class prediction_pipeline:
              try:
                   prediction_file_path = self.save_input_file()
                   cleaned_file_path = self.read_prediction_file(prediction_file_path)
-                  LOCAL_container_PROCESSOR_PATH = self.download_from_s3(self.prediction_configuration.PROCESSOR_S3_PATH, self.prediction_configuration.LOCAL_container_PROCESSOR_PATH)
-                  LOCAL_container_Model_PATH = self.download_from_s3(self.prediction_configuration.MODEL_S3_PATH, self.prediction_configuration.LOCAL_container_MODEL_PATH)
-                  predicted_file_path = self.cleaned_predicted_file(cleaned_file_path, LOCAL_container_PROCESSOR_PATH,LOCAL_container_Model_PATH)
+                  #PROCESSOR_PATH = self.download_from_s3(self.prediction_configuration.PROCESSOR_S3_PATH, self.prediction_configuration.LOCAL_container_PROCESSOR_PATH)
+                  #Model_PATH = self.download_from_s3(self.prediction_configuration.MODEL_S3_PATH, self.prediction_configuration.LOCAL_container_MODEL_PATH)
+                  predicted_file_path = self.cleaned_predicted_file(cleaned_file_path, self.prediction_configuration.PROCESSOR_PATH, self.prediction_configuration.MODEL_PATH)
                   return predicted_file_path
              
              except Exception as e:
