@@ -2,7 +2,7 @@
 FROM python:3.10-slim-buster
 
 # Install system dependencies
-RUN apt-get update && apt-get install -y --no-install-recommends \
+RUN apt-get update && apt-get install -y git \
     build-essential \
     libssl-dev \
     libffi-dev \
