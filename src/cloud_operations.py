@@ -67,11 +67,12 @@ class dvc:
     def dvc_pull(self):
         try:
             logging.info("Fetching artifacts using DVC...")
-            result = subprocess.run(["dvc", "pull"], check=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
-            logging.info(result.stdout.decode())
+
+            result = subprocess.run(["dvc", "pull"], check=True,capture_output=True, text=True)
+            logging.info(result.stdout)
             logging.info("Artifacts pulled successfully.")
         except subprocess.CalledProcessError as e:
-            logging.error(f"Error during DVC pull: {e.stderr.decode()}")
+            logging.error(f"Error during DVC pull: {e.stderr}")
             raise CustomException(e, sys)
         
     def load_model_and_processor(self):
