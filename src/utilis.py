@@ -35,7 +35,7 @@ def upload_data_db():
             client = MongoClient(URL)
             db = client['phishing']
             collection = db['phishing_collection']
-            df = pd.read_csv("notebook\data\Phishing.csv")
+            df = pd.read_csv("notebook\data\Phishing.csv".rstrip("\\"))
             data = df.to_dict('records')
             collection.insert_many(data)
             logging.info("CSV uploaded successfully")
@@ -127,11 +127,13 @@ def integrate_ml_flow():
 def modeltraining(X_train,X_test,y_train,y_test):
       
     try:
+        '''
         try:
             a = integrate_ml_flow()
             logging.info(f"{a}")
         except Exception as e:
             logging.info(f" Error - {e,sys}") 
+        '''
 
         models = { "LR" : LogisticRegressionCV(),
             "SVC" : SVC(),
