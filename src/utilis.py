@@ -35,7 +35,7 @@ def upload_data_db():
             client = MongoClient(URL)
             db = client['phishing']
             collection = db['phishing_collection']
-            df = pd.read_csv("notebook\data\Phishing.csv".rstrip("\\"))
+            df = pd.read_csv("app\notebook\data\Phishing.csv")
             data = df.to_dict('records')
             collection.insert_many(data)
             logging.info("CSV uploaded successfully")
