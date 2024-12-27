@@ -36,7 +36,12 @@ def folder_structure():
     folder_structure = {}
     for root, dirs, files in os.walk("/"):  # Start from the root directory
         folder_structure[root] = {"dirs": dirs, "files": files}
-    return jsonify(folder_structure)
+    file_path = 'notebook/data/Phishing.csv'
+    if os.path.exists(file_path):
+        return (f"File found: {file_path}, {os.getcwd()}")
+    else:
+         return (f"File not found: {file_path}")
+    #return jsonify(folder_structure)
 
 
 @app.route('/train')
