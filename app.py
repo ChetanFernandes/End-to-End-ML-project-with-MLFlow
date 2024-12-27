@@ -36,7 +36,7 @@ def folder_structure():
     folder_structure = {}
     for root, dirs, files in os.walk("/"):  # Start from the root directory
         folder_structure[root] = {"dirs": dirs, "files": files}
-        return (f" {os.getcwd(),jsonify(folder_structure)}")
+        return jsonify(folder_structure)
 
 
 @app.route('/train')
