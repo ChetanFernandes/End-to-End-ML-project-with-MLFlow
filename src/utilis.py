@@ -118,7 +118,7 @@ def modeltraining(X_train,X_test,y_train,y_test):
             "GNB" : GaussianNB()
                 }
 
-        mlflow.autolog()
+        mlflow.set_experiment("Production Envt")
         
         
         model_list = []
@@ -209,7 +209,7 @@ def hyperparameter_tuning(path,X_train,X_test,y_train,y_test):
   
     try:
 
-        mlflow.set_tracking_uri("http://your-mlflow-server:5000")
+  
         mlflow.set_experiment("Hyper_Training_prod_envt")
 
         Hyper_tuning_model_list = []
