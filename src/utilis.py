@@ -117,10 +117,6 @@ def modeltraining(X_train,X_test,y_train,y_test):
             "DTC" : DecisionTreeClassifier(),
             "GNB" : GaussianNB()
                 }
-
-        mlflow.set_experiment("Production Envt")
-        
-        
         model_list = []
         report = []
 
@@ -208,10 +204,6 @@ def modeltraining(X_train,X_test,y_train,y_test):
 def hyperparameter_tuning(path,X_train,X_test,y_train,y_test):
   
     try:
-
-  
-        mlflow.set_experiment("Hyper_Training_prod_envt")
-
         Hyper_tuning_model_list = []
         Hyper_tuning_report = []
 

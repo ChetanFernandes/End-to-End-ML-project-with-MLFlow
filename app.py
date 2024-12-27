@@ -38,18 +38,6 @@ def folder_structure():
         folder_structure[root] = {"dirs": dirs, "files": files}
     return jsonify(folder_structure)
 
-@app.route('/ml_flow')   
-def configure_mlflow():
-    try:
-        dagshub_repo = "https://dagshub.com/ChetanFernandes/End-to-End-ML-project-with-MLFlow.mlflow"
-        os.environ["MLFLOW_TRACKING_USERNAME"] = "ChetanFernandes"
-        DAGSHUB_TOKEN = "12b09ff4bffdfca8f00a5fc41819f3004066dbc4"
-        os.environ["MLFLOW_TRACKING_PASSWORD"] = DAGSHUB_TOKEN 
-        mlflow.set_tracking_uri(dagshub_repo)
-        return "Mlflow Initiatd"
-    except Exception as e:
-        raise CustomException(e,sys)
-
 
 @app.route('/train')
 def trigger_pipeline():
