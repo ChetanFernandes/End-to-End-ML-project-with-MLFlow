@@ -146,7 +146,7 @@ def modeltraining(X_train,X_test,y_train,y_test):
                 }
             
         logging.info("Intializing ML flow")
-        mlflow.set_experiment("Training_model_1.1")
+        #mlflow.set_experiment("Training_model_1.1")
         
         model_list = []
         report = []
@@ -237,7 +237,7 @@ def hyperparameter_tuning(path,X_train,X_test,y_train,y_test):
     try:
 
         logging.info("Creating a new ML flow experiment")
-        mlflow.set_experiment("Hyper_Training_1.6")
+        #mlflow.set_experiment("Hyper_Training_1.6")
 
         Hyper_tuning_model_list = []
         Hyper_tuning_report = []
