@@ -31,6 +31,13 @@ def data_upload_to_db():
     message = upload_data_db()
     return "Data successfully uploaded to MongoDB"
 
+@app.route('/folder_structure')
+def folder_structure():
+    folder_structure = {}
+    for root, dirs, files in os.walk("/"):  # Start from the root directory
+        folder_structure[root] = {"dirs": dirs, "files": files}
+    return jsonify(folder_structure)
+
 
 @app.route('/train')
 def trigger_pipeline():
