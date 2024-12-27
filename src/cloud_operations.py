@@ -58,7 +58,7 @@ class dvc:
             subprocess.run(["dvc", "remote", "modify", "s3_remote", "secret_access_key", aws_secret_key], check=True)
 
             logging.info("DVC initialized and S3 remote configured")
-            return "DVC initialized and S3 remote configured"
+            #return "DVC initialized and S3 remote configured"
       
         except Exception as e:
             logging.error(f"Error initializing DVC with S3: {e}")
