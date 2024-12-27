@@ -47,11 +47,20 @@ def trigger_pipeline():
             DVC.initialize_dvc_s3()
             try:
                 logging.info("Running the training pipeline")
-                subprocess.run(["dvc", "repro"], check=True)
+                try:
+                    repro = subprocess.run(["dvc", "repro"], check=True, capture_output=True, text=True)
+                    logging.info(f" repro -> {repro.stdout}")
+                except Exception as e:
+                    logging.error(f"Error during DVC pull: {e.stderr}")
 
                 # Step 2: Push artifacts to S3
                 logging.info("Pushing tracked artifacts to S3")
-                subprocess.run(["dvc", "push"], check=True)
+                try:
+                    push = subprocess.run(["dvc", "push"], check=True,capture_output=True, text=True)
+                    logging.info(f" repro-> {push.stdout}")
+                except Exception as e:
+                    logging.error(f"Error during DVC push: {e.stderr}")
+
 
                 logging.info("Pipeline executed successfully, and artifacts pushed to S3")
                 return "Training Successfull"

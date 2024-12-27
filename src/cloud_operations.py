@@ -67,7 +67,6 @@ class dvc:
     def dvc_pull(self):
         try:
             logging.info("Fetching artifacts using DVC...")
-
             result = subprocess.run(["dvc", "pull"], check=True,capture_output=True, text=True)
             logging.info(result.stdout)
             logging.info("Artifacts pulled successfully.")

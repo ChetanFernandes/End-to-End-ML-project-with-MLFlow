@@ -120,9 +120,15 @@ def save_metrics_json(base_path, metric, model):
         raise CustomException(f"Error in saving metrics JSON: {e}", sys)
 
 
-def integrate_ml_flow():
+#def integrate_ml_flow():
         dagshub.init(repo_owner='chetanfernandes', repo_name='End-to-End-ML-project-with-MLFlow', mlflow=True)
     
+def configure_mlflow():
+    dagshub_repo = "https://dagshub.com/ChetanFernandes/End-to-End-ML-project-with-MLFlow.mlflow"
+    os.environ["MLFLOW_TRACKING_USERNAME"] = "ChetanFernandes"
+    os.environ["MLFLOW_TRACKING_PASSWORD"] = os.getenv("DAGSHUB_TOKEN")  
+    mlflow.set_tracking_uri(dagshub_repo)
+
      
 def modeltraining(X_train,X_test,y_train,y_test):
       
@@ -146,7 +152,7 @@ def modeltraining(X_train,X_test,y_train,y_test):
                 }
             
         logging.info("Intializing ML flow")
-        #mlflow.set_experiment("Training_model_1.1")
+        mlflow.set_experiment("Training_model_1.1")
         
         model_list = []
         report = []
