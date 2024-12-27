@@ -64,19 +64,19 @@ def trigger_pipeline():
       
 
 # Predict using model
-@app.route("/predict", methods = ["GET","POST"])
+@app.route("/predict")
 def predict():
     try:
-        if request.method == 'POST':
-            DVC = dvc()
-            DVC.initialize_dvc_s3()
-            DVC.load_model_and_processor()
+        #if request.method == 'POST':
+        DVC = dvc()
+        DVC.initialize_dvc_s3()
+        DVC.load_model_and_processor()
 
-            pred_pipe = prediction_pipeline(request)
-            predicted_file_path = pred_pipe.run_pred_pipeline()
-            return send_file(predicted_file_path, download_name = "predicted_file.csv", as_attachment = True)
-        else:
-            return render_template('index.html')
+        pred_pipe = prediction_pipeline()
+        predicted_file_path = pred_pipe.run_pred_pipeline()
+        return send_file(predicted_file_path, download_name = "predicted_file.csv", as_attachment = True)
+        #else:
+            #return render_template('index.html')
             
     except Exception as e:
         raise CustomException(e,sys)

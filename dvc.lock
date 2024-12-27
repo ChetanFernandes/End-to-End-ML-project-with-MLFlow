@@ -30,8 +30,8 @@ stages:
       size: 3210
     - path: src/utilis.py
       hash: md5
-      md5: 7615bf1a6236c454071c9ab0077da6ec
-      size: 12456
+      md5: 47993de65b6c3ea8743545d4c58c03b4
+      size: 12495
     outs:
     - path: artifacts/Processor.pkl
       hash: md5
@@ -80,10 +80,10 @@ stages:
       size: 3210
     - path: src/utilis.py
       hash: md5
-      md5: 7615bf1a6236c454071c9ab0077da6ec
-      size: 12456
+      md5: 47993de65b6c3ea8743545d4c58c03b4
+      size: 12495
     outs:
     - path: artifacts/Model.pkl
       hash: md5
-      md5: 5a60cf20650d7968b5929e444b1f150c
-      size: 8210042
+      md5: 724ed7b2e8cf8c38870b312d8ec374f5
+      size: 8846591

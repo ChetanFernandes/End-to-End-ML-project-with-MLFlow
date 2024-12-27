@@ -19,6 +19,7 @@ stages:
       - artifacts/y_train.csv
       - artifacts/y_test.csv
       - artifacts/Processor.pkl
+   
 
   model_training:
     cmd: python src/pipeline/Training_pipeline.py --task model_trainer --x_train_path artifacts/X_train.csv --x_test_path artifacts/X_test.csv 

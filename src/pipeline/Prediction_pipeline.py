@@ -13,6 +13,8 @@ class prediction_config:
     pred_file_input_dir:str = "prediction"
     predicted_file:str = os.path.join(pred_file_input_dir,"predicted_file.csv")
     transformed_prediction_file:str = os.path.join(pred_file_input_dir,"transformed_file.csv")
+    X_test_file = os.path.join("artifacts", "X_test.csv")
+    y_test_file = os.path.join("artifacts","y_test.csv")
     PROCESSOR_PATH:str = os.path.join("artifacts","Processor.pkl")
     MODEL_PATH:str = os.path.join("artifacts","Model.pkl")
 
@@ -22,8 +24,8 @@ class prediction_config:
   
 
 class prediction_pipeline:
-        def __init__(self,request):
-         self.request = request
+        def __init__(self):
+         #self.request = request
          self.prediction_configuration = prediction_config()
 
 
@@ -130,15 +132,14 @@ class prediction_pipeline:
              except Exception as e:
                   raise CustomException(e,sys)
              
-        def cleaned_predicted_file(self,cleaned_file_path,PROCESSOR_PATH,Model_PATH):
+        def cleaned_predicted_file(self,X_test_path,PROCESSOR_PATH,Model_PATH):
              try:
-                df:pd.DataFrame = pd.read_csv(cleaned_file_path)
-                logging.info(f"{cleaned_file_path}")
+                df:pd.DataFrame = pd.read_csv(X_test_path)
+                logging.info(f"{X_test_path}")
                 preds = self.predict(df,PROCESSOR_PATH,Model_PATH )
-                y_test_path = os.path.join("artifacts", "y_test.csv")
-                y_test_result:pd.DataFrame = pd.read_csv(y_test_path)
+                y_test:pd.DataFrame = pd.read_csv(self.prediction_configuration.y_test_file)
 
-                df:pd.DataFrame = pd.concat([df,y_test_result],ignore_index=False, axis = 1)
+                df:pd.DataFrame = pd.concat([df,y_test],ignore_index=False, axis = 1)
 
                 df["Model_Result"] = [pred for pred in preds]
                 df["Categorical_result"] = [pred for pred in preds]
@@ -156,11 +157,11 @@ class prediction_pipeline:
              
         def run_pred_pipeline(self):
              try:
-                  prediction_file_path = self.save_input_file()
-                  cleaned_file_path = self.read_prediction_file(prediction_file_path)
+                  #prediction_file_path = self.save_input_file()
+                  #cleaned_file_path = self.read_prediction_file(prediction_file_path)
                   #PROCESSOR_PATH = self.download_from_s3(self.prediction_configuration.PROCESSOR_S3_PATH, self.prediction_configuration.LOCAL_container_PROCESSOR_PATH)
                   #Model_PATH = self.download_from_s3(self.prediction_configuration.MODEL_S3_PATH, self.prediction_configuration.LOCAL_container_MODEL_PATH)
-                  predicted_file_path = self.cleaned_predicted_file(cleaned_file_path, self.prediction_configuration.PROCESSOR_PATH, self.prediction_configuration.MODEL_PATH)
+                  predicted_file_path = self.cleaned_predicted_file(self.prediction_configuration.X_test_file, self.prediction_configuration.PROCESSOR_PATH, self.prediction_configuration.MODEL_PATH)
                   return predicted_file_path
              
              except Exception as e:

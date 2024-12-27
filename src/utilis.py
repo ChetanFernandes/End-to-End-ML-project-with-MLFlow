@@ -156,7 +156,7 @@ def modeltraining(X_train,X_test,y_train,y_test):
             logging.info(f" Model name -> {model}")
 
             logging.info("Cross Validation")
-            scores = cross_validate(model, X_train, y_train, cv = 5, scoring = 'accuracy')
+            scores = cross_validate(model, X_train, y_train, cv = 5, scoring = 'accuracy', verbose=5)
             logging.info(f" Scores , {scores['test_score']}")
             mean_scores = np.mean(scores['test_score'])
             logging.info(f"Model {model}: CV Mean Accuracy: {mean_scores * 100:.2f}%")

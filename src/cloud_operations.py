@@ -23,7 +23,9 @@ class dvc:
     def __init__(self):
         self.model_file = "artifacts/Model.pkl"
         self.processor_file = "artifacts/Processor.pkl"
-
+        self.X_test_file = "artifacts/X_test.csv"
+        self.y_test_file = "artifacts/y_test.csv"
+        
     def initialize_dvc_s3(self):
         try:
             # Fetch environment variables
@@ -80,9 +82,16 @@ class dvc:
                     raise FileNotFoundError(f"Model file not found: {self.model_file}")
                 if not os.path.exists(self.processor_file):
                     raise FileNotFoundError(f"Processor file not found: {self.processor_file}")
+                if not os.path.exists(self.X_test_file):
+                    raise FileNotFoundError(f"Test file not found: {self.X_test_file}")
+                if not os.path.exists(self.y_test_file):
+                    raise FileNotFoundError(f"Test file not found: {self.y_test_file}")
+
 
                 logging.info(f"Model file located at: {self.model_file}")
                 logging.info(f"Processor file located at: {self.processor_file}")
+                logging.info(f"X_Testing file located at: {self.X_test_file}")
+                logging.info(f"Y_test file located at: {self.y_test_file}")
 
             except Exception as e:
                 raise CustomException(e, sys)
