@@ -100,46 +100,13 @@ def load_model_obj(path):
     except Exception as e:
           raise CustomException(e,sys)
 
-     
-def save_metrics_json(base_path, metric, model):
-    try:
-        logging.info("Inside JSON function")
-        
-        # Construct the directory and file path
-        dir_path = os.path.dirname(base_path)
-        os.makedirs(dir_path, exist_ok=True)
-        file_path = os.path.join(dir_path, f"{model}_metrics.json")
-        
-        # Save metrics to JSON
-        with open(file_path, "w") as file:
-            json.dump(metric, file, indent=4)
-        
-        logging.info(f"Metrics logged successfully at {file_path}")
-    
-    except Exception as e:
-        raise CustomException(f"Error in saving metrics JSON: {e}", sys)
-
 
 #def integrate_ml_flow():
-        dagshub.init(repo_owner='chetanfernandes', repo_name='End-to-End-ML-project-with-MLFlow', mlflow=True)
-    
-def configure_mlflow():
-    dagshub_repo = "https://dagshub.com/ChetanFernandes/End-to-End-ML-project-with-MLFlow.mlflow"
-    os.environ["MLFLOW_TRACKING_USERNAME"] = "ChetanFernandes"
-    os.environ["MLFLOW_TRACKING_PASSWORD"] = os.getenv("DAGSHUB_TOKEN")  
-    mlflow.set_tracking_uri(dagshub_repo)
-
-     
+        #dagshub.init(repo_owner='chetanfernandes', repo_name='End-to-End-ML-project-with-MLFlow', mlflow=True)
+       
 def modeltraining(X_train,X_test,y_train,y_test):
       
     try:
-        '''
-        try:
-            a = integrate_ml_flow()
-            logging.info(f"{a}")
-        except Exception as e:
-            logging.info(f" Error - {e,sys}") 
-        '''
 
         models = { "LR" : LogisticRegressionCV(),
             "SVC" : SVC(),
@@ -150,9 +117,9 @@ def modeltraining(X_train,X_test,y_train,y_test):
             "DTC" : DecisionTreeClassifier(),
             "GNB" : GaussianNB()
                 }
-            
-        logging.info("Intializing ML flow")
-        mlflow.set_experiment("Training_model_1.1")
+
+        mlflow.autolog()
+        
         
         model_list = []
         report = []
@@ -242,8 +209,8 @@ def hyperparameter_tuning(path,X_train,X_test,y_train,y_test):
   
     try:
 
-        logging.info("Creating a new ML flow experiment")
-        #mlflow.set_experiment("Hyper_Training_1.6")
+        mlflow.set_tracking_uri("http://your-mlflow-server:5000")
+        mlflow.set_experiment("Hyper_Training_prod_envt")
 
         Hyper_tuning_model_list = []
         Hyper_tuning_report = []
@@ -260,7 +227,7 @@ def hyperparameter_tuning(path,X_train,X_test,y_train,y_test):
             logging.info(f"Starting hyperparameter tuning for: {model_name}")
             model_param_grid = read_yaml_file(path)["model_selection"]["model"][model_name]["search_param_grid"]
             logging.info("Starting Grid search CV")
-            grid_search = GridSearchCV(model_obj, param_grid = model_param_grid, cv=4, n_jobs=1, verbose=5)
+            grid_search = GridSearchCV(model_obj, param_grid = model_param_grid, cv=4, n_jobs=4, verbose=5)
             grid_search.fit(X_train,y_train)
             logging.info("Grid search CV ended")
 
