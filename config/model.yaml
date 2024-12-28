@@ -41,6 +41,8 @@ model_selection:
            - 2
            - 4
            - 10
+          max_iter:
+           - 1000
           kernel: 
            - linear
            - poly

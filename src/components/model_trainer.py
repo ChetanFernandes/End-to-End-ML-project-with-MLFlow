@@ -2,9 +2,6 @@ import sys,os
 from  src.exception_handling import CustomException
 from src.logging import logging
 from dataclasses import dataclass
-import pandas as pd
-import numpy as np
-from  sklearn.model_selection import train_test_split
 from src.utilis import *
 import warnings
 warnings.filterwarnings('ignore', category=FutureWarning)
@@ -30,9 +27,13 @@ class model_training:
 
             X_train = pd.DataFrame(pd.read_csv(x_train_path))
             X_test = pd.DataFrame(pd.read_csv(x_test_path))
-            y_train = pd.DataFrame(pd.read_csv(y_train_path))
-            y_test = pd.DataFrame(pd.read_csv(y_test_path))
+            y_train = (pd.read_csv(y_train_path))
+            y_test =  (pd.read_csv(y_test_path))
+            logging.info(f" {y_train.shape,y_test.shape}")
 
+            y_train = y_train.to_numpy().ravel()
+            y_test = y_test.to_numpy().ravel()
+        
             logging.info(f"Data read  for model training-> {X_train.shape, X_test.shape, y_train.shape, y_test.shape}")
 
             best_model_obj = modeltraining(X_train,X_test,y_train,y_test)

@@ -15,19 +15,17 @@ from sklearn.ensemble import GradientBoostingClassifier
 from sklearn.tree import DecisionTreeClassifier
 from sklearn.naive_bayes import GaussianNB
 from sklearn.model_selection import cross_validate
-from sklearn.metrics import roc_curve, roc_auc_score
+from sklearn.metrics import  roc_auc_score
 from sklearn.model_selection import GridSearchCV
-import dagshub, mlflow
 import matplotlib.pyplot as plt
 import json
 import warnings
 warnings.filterwarnings('ignore')
 import yaml
-from mlflow.models.signature import infer_signature
 from sklearn.pipeline import Pipeline
 from sklearn.preprocessing import RobustScaler 
 from src.constants.constants import URL
-
+import mlflow
 
 def upload_data_db():
         logging.info("Uploading Data to MongoDB")
@@ -100,16 +98,15 @@ def load_model_obj(path):
     except Exception as e:
           raise CustomException(e,sys)
 
+        
 
-#def integrate_ml_flow():
-        #dagshub.init(repo_owner='chetanfernandes', repo_name='End-to-End-ML-project-with-MLFlow', mlflow=True)
        
 def modeltraining(X_train,X_test,y_train,y_test):
       
     try:
 
+         
         models = { "LR" : LogisticRegressionCV(),
-            "SVC" : SVC(),
             "LSVC" : LinearSVC(),
             "RFC" : RandomForestClassifier(),
             "ABC" : AdaBoostClassifier(),
@@ -141,7 +138,6 @@ def modeltraining(X_train,X_test,y_train,y_test):
                 auc_score = roc_auc_score(y_test,y_pred)
             except ValueError:
                 auc_score = None
-
             accuracy = accuracy_score(y_test,y_pred)
             metrics = {"auc_score": auc_score, "Accuracy Score": accuracy}
 
@@ -240,7 +236,7 @@ def hyperparameter_tuning(path,X_train,X_test,y_train,y_test):
             # Log the model with a unique artifact path
             artifact_path = model_name
             try:
-                with mlflow.start_run(run_name = model_name):
+                #with mlflow.start_run(run_name = model_name):
                 
                     # Log the error metrics that were calculated during validation
                     mlflow.log_metrics(metrics)
@@ -269,8 +265,8 @@ def hyperparameter_tuning(path,X_train,X_test,y_train,y_test):
         best_model = Hyper_tuning_model_list[best_index]
         logging.info(f"Best model: {list(Hyper_models.keys())[best_index]} with accuracy: {Hyper_tuning_report[best_index]:.2f}%")
 
-        with mlflow.start_run(run_name="Best_Model_Run"):
-            mlflow.sklearn.log_model(sk_model=best_model, input_example=X_train, artifact_path="best_model")
+        #with mlflow.start_run(run_name="Best_Model_Run"):
+            #mlflow.sklearn.log_model(sk_model=best_model, input_example=X_train, artifact_path="best_model")
 
         return best_model
 
