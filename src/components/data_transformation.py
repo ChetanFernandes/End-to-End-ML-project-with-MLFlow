@@ -44,6 +44,9 @@ class initiate_data_transformation:
         
             logging.info(f"Check for null values")
             logging.info(f"Count of null values -> {df.isnull().sum().sum()}")
+            for col in df.select_dtypes(include=['int64', 'float64']).columns:
+                 df[col] = df[col].astype('float64')
+
             null_columns = [col for  col in df.columns if df[col].isnull().sum() > 0]
             for col in null_columns:
                     df[col].fillna(df[col].median(), inplace=True)

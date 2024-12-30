@@ -203,8 +203,6 @@ def hyperparameter_tuning(path,X_train,X_test,y_train,y_test):
 
         
         Hyper_models = { 
-                    "SVC" : SVC(),
-                    "LSVC" : LinearSVC(),
                     "RFC" : RandomForestClassifier(), 
                     "GBC" : GradientBoostingClassifier()
                   
@@ -253,11 +251,11 @@ def hyperparameter_tuning(path,X_train,X_test,y_train,y_test):
          # Identify and log the best model
         best_index = np.argmax(Hyper_tuning_report)
         best_model = Hyper_tuning_model_list[best_index]
-        logging.info(f"Best model: {list(Hyper_models.keys())[best_index]} with accuracy: {Hyper_tuning_report[best_index]:.2f}%")
+        logging.info(f" Best model is - {best_model} with accuracy -> {Hyper_tuning_report[best_index]}")
         try:
             with mlflow.start_run(run_name="Best_Model_Run"):
                 mlflow.log_params(best_params, "value 🚀".encode("ascii", "ignore").decode())
-                mlflow.sklearn.log_model(sk_model=best_model, input_example=X_train, artifact_path="best_model")
+                mlflow.sklearn.log_model(sk_model=best_model, input_example=X_train, artifact_path = best_model)
         except Exception as e:
                     logging.error(f"MLFlow error for {model_name}: {str(e)}")
         return best_model
