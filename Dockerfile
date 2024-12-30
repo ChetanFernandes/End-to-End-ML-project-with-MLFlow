@@ -32,5 +32,5 @@ COPY . .
 #EXPOSE 8000
 
 # Start the application
-CMD ["gunicorn", "-w", "6","--timeout", "900", "--bind", "0.0.0.0:8000", "app:app"]
+CMD ["gunicorn", "-w", "6","--timeout", "7200", "--bind", "0.0.0.0:8000", "app:app"]
 
