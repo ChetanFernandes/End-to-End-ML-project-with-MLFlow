@@ -120,7 +120,6 @@ def modeltraining(X_train,X_test,y_train,y_test):
             "ABC" : AdaBoostClassifier(),
             "GBC" : GradientBoostingClassifier(),
             "DTC" : DecisionTreeClassifier(),
-            "GNB" : GaussianNB()
                 }
         model_list = []
         report = []
