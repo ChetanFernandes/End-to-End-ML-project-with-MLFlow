@@ -254,7 +254,7 @@ def hyperparameter_tuning(path,X_train,X_test,y_train,y_test):
         try:
             with mlflow.start_run(run_name="Best_Model_Run"):
                 mlflow.log_params(best_params, "value 🚀".encode("ascii", "ignore").decode())
-                mlflow.sklearn.log_model(sk_model=best_model, input_example=X_train, artifact_path = best_model)
+                mlflow.sklearn.log_model(sk_model=best_model, input_example=X_train, artifact_path = "Model")
         except Exception as e:
                     logging.error(f"MLFlow error for {model_name}: {str(e)}")
         return best_model
