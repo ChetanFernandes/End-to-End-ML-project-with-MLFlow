@@ -9,11 +9,11 @@ RUN apt-get update && apt-get install -y git \
     python3-dev && \
     rm -rf /var/lib/apt/lists/*
 
-# Clone the Git repository
-RUN git clone https://github.com/ChetanFernandes/End-to-End-ML-project-with-MLFlow /app
-
 # Set the working directory
 WORKDIR /app
+
+# Clone the Git repository
+RUN git clone https://github.com/ChetanFernandes/End-to-End-ML-project-with-MLFlow /app
 
 # Copy dependencies first (for caching layers)
 COPY requirements.txt .
@@ -24,9 +24,6 @@ RUN pip install --no-cache-dir -r requirements.txt
 # Install DVC with S3 support
 RUN pip install dvc[s3]  # Modify `[s3]` to match your remote type, if needed.
 
-# Clone the repository
-#ARG REPO URL
-#RUN git clone $REPO_URL
 
 # Copy the rest of the application code
 COPY . .
@@ -35,5 +32,5 @@ COPY . .
 #EXPOSE 8000
 
 # Start the application
-CMD ["python3", "app.py"]
+CMD ["gunicorn", "-w", "5","--timeout", "300", "--bind", "0.0.0.0:8000", "app:app"]
 
