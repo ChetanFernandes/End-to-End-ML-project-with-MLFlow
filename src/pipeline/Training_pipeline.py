@@ -67,7 +67,7 @@ def main():
         elif args.task == 'model_trainer':
             best_hyper_tuned_model_obj_path = model_trainer(args.x_train_path,args.x_test_path,args.y_train_path,args.y_test_path)
             logging.info("Training and Hyper Tunning completed Completed")
-            logging.info("Best model object post hyper_training saved in path ", best_hyper_tuned_model_obj_path)
+            logging.info(f" Best model object post hyper_training saved in path -> {best_hyper_tuned_model_obj_path}")
     
 
     except Exception as e:
@@ -76,7 +76,7 @@ def main():
 
     
 if __name__ == "__main__":
-   main()
+    main()
 
         
 
