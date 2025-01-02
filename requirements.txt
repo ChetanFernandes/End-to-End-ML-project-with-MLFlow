@@ -28,5 +28,5 @@ dvc == 3.58.0
 dvc[s3]
 python-box == 7.3.0
 mlflow
--e .
+
 
