@@ -13,7 +13,7 @@ RUN apt-get update && apt-get install -y git \
 WORKDIR /app
 
 # Clone the Git repository
-RUN git clone https://github.com/ChetanFernandes/End-to-End-ML-project-with-MLFlow /app
+#RUN git clone https://github.com/ChetanFernandes/End-to-End-ML-project-with-MLFlow /app
 
 # Copy dependencies first (for caching layers)
 COPY requirements.txt .
