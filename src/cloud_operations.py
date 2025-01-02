@@ -26,6 +26,7 @@ class dvc:
             s3_remote_url = f"s3://phishingartifacts/artifacts/".rstrip("/")
             remote_name = "s3_remote"
 
+            logging.info(f"{aws_access_key,aws_secret_key}")
             if not aws_access_key or not aws_secret_key or not s3_bucket:
                 raise ValueError("AWS credentials or S3 bucket not configured in environment variables")
 

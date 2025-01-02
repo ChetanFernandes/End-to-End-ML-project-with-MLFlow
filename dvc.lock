@@ -85,5 +85,5 @@ stages:
     outs:
     - path: artifacts/Model.pkl
       hash: md5
-      md5: 4e482774218a6dbd3906eb947b9c055d
-      size: 8240895
+      md5: 77b949fa643daf6999970aa8d3229e45
+      size: 8201562
